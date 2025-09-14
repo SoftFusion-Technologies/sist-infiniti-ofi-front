@@ -1,1 +1,13 @@
 @import "tailwindcss";
+
+/* Aplica Montserrat a todo el cuerpo de la página */
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/* También puedes especificar pesos de fuente si quieres que ciertos elementos tengan un peso por defecto */
+/* Por ejemplo, todos los h1 serán Montserrat bold */
+h1 {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700; /* Negrita */
+}
