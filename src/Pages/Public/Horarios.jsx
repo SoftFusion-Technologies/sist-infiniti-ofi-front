@@ -15,7 +15,7 @@ const Horarios = () => {
   ];
 
   return (
-    <div className="bg-gray-900 flex items-center justify-center py-12 px-4">
+    <div className="bg-gray-950 flex items-center justify-center py-12 px-4">
       <div className="max-w-3xl w-full bg-black p-8 sm:p-10 rounded-xl shadow-2xl shadow-orange-500/20 border border-gray-800">
         
         {/* Header */}

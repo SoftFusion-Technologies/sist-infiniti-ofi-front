@@ -41,36 +41,37 @@ const HeroSection = () => (
 const FeaturesSection = () => {
   const features = [
     {
-      icon: <FaDumbbell size={40} className="mx-auto text-orange-500" />,
+      icon: <FaDumbbell size={44} className="mx-auto text-orange-500" />,
       title: "Equipamiento Moderno",
       description:
         "Máquinas de última generación para maximizar tus resultados.",
     },
     {
-      icon: <FaUsers size={40} className="mx-auto text-orange-500" />,
+      icon: <FaUsers size={44} className="mx-auto text-purple-500" />,
       title: "Comunidad Increíble",
       description: "Entrena en un ambiente de apoyo y motivación constante.",
     },
     {
-      icon: <FaAward size={40} className="mx-auto text-orange-500" />,
+      icon: <FaAward size={44} className="mx-auto text-yellow-400" />,
       title: "Coaches Certificados",
       description: "Expertos dedicados a guiarte en cada paso de tu camino.",
     },
   ];
 
   return (
-    <div className="bg-gray-900 py-20 px-4">
-      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-12 text-center">
+    <div className="bg-neutral-950 py-16 px-4">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-10 text-center">
         {features.map((feature) => (
           <div
             key={feature.title}
-            className="p-6 bg-black rounded-xl shadow-lg shadow-orange-500/10"
+            className="relative p-8 bg-neutral-900 rounded-2xl shadow-lg border border-neutral-800 transition-transform duration-300 hover:-translate-y-2 hover:shadow-orange-500/20"
           >
-            {feature.icon}
-            <h3 className="text-2xl font-bold text-white mt-4 mb-2">
+            <div className="mb-4">{feature.icon}</div>
+            <h3 className="text-2xl font-bold text-white mt-2 mb-2 tracking-tight">
               {feature.title}
             </h3>
             <p className="text-gray-400">{feature.description}</p>
+            <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-orange-500 via-orange-500 to-yellow-400 opacity-30 rounded-b-2xl"></div>
           </div>
         ))}
       </div>
@@ -84,38 +85,43 @@ const TestimonialsSection = () => {
     {
       name: "Ana Pérez",
       quote:
-        '"El cambio en mi vida ha sido increíble. Los coaches son súper atentos y el ambiente es genial. ¡Lo recomiendo al 100%!"',
+        "El cambio en mi vida ha sido increíble. Los coaches son súper atentos y el ambiente es genial. ¡Lo recomiendo al 100%!",
       image: "https://randomuser.me/api/portraits/women/44.jpg",
     },
     {
       name: "Carlos Vera",
       quote:
-        '"Nunca pensé que disfrutaría tanto ir al gimnasio. INFINITY es más que un lugar para entrenar, es una segunda casa."',
+        "Nunca pensé que disfrutaría tanto ir al gimnasio. INFINITY es más que un lugar para entrenar, es una segunda casa.",
       image: "https://randomuser.me/api/portraits/men/32.jpg",
     },
   ];
 
   return (
-    <div className="bg-black py-20 px-4">
+    <div className="bg-gradient-to-b from-black via-neutral-900 to-black py-20 px-4">
       <div className="max-w-4xl mx-auto text-center">
-        <h2 className="text-4xl font-bold text-white mb-12">
+        <h2 className="text-4xl font-bold text-white mb-12 tracking-tight">
           Lo que dicen nuestros clientes
         </h2>
         <div className="grid md:grid-cols-2 gap-10">
           {testimonials.map((testimonial) => (
             <div
               key={testimonial.name}
-              className="bg-gray-900 p-8 rounded-lg border border-gray-800"
+              className="relative bg-neutral-900 p-8 rounded-2xl border border-neutral-800 shadow-xl transition-transform duration-300 hover:-translate-y-2 hover:shadow-orange-500/30 group"
             >
-              <img
-                src={testimonial.image}
-                alt={testimonial.name}
-                className="w-20 h-20 rounded-full mx-auto mb-4 border-2 border-orange-500"
-              />
-              <p className="text-gray-300 italic mb-4">"{testimonial.quote}"</p>
-              <h4 className="font-bold text-orange-500 text-lg">
-                {testimonial.name}
-              </h4>
+              <div className="flex flex-col items-center">
+                <img
+                  src={testimonial.image}
+                  alt={testimonial.name}
+                  className="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-orange-500 shadow-lg group-hover:scale-105 transition-transform duration-300"
+                />
+                <p className="text-gray-200 italic mb-4 text-lg leading-relaxed">
+                  “{testimonial.quote}”
+                </p>
+                <h4 className="font-bold text-orange-500 text-lg mt-2 tracking-wide">
+                  {testimonial.name}
+                </h4>
+              </div>
+              <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-orange-500 via-orange-500 to-yellow-400 opacity-40 rounded-b-2xl"></div>
             </div>
           ))}
         </div>

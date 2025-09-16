@@ -9,13 +9,13 @@ const routes = [
         path: "/",
         element: <Home />,
         name: "Home",
-        showInNav: false, // El logo ya nos lleva al Home
+        showInNav: false, 
     },
     {
         path: "/clase-prueba",
         element: <ClasePrueba />,
         name: "Clase de Prueba",
-        showInNav: false, // Esto será un botón aparte
+        showInNav: false, 
     },
     {
         path: "/horarios",

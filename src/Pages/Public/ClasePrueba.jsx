@@ -84,7 +84,7 @@ const ClasePrueba = () => {
     "mt-1 block w-full bg-gray-800 border border-gray-700 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-orange-500 focus:border-orange-500";
 
   return (
-    <div className="bg-gray-900 flex items-center justify-center py-12 px-4">
+    <div className="bg-gray-950 flex items-center justify-center py-12 px-4">
       <div className="max-w-2xl w-full bg-black p-8 rounded-xl shadow-2xl shadow-orange-500/20 border border-gray-800">
         <h2 className="text-3xl font-bold text-white text-center mb-2">
           Solicita tu Clase de Prueba
