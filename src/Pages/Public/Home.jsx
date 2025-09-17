@@ -1,5 +1,5 @@
 import { FaDumbbell, FaUsers, FaAward } from "react-icons/fa";
-import Ubication from "../../components/ubication";
+import Ubication from "../../components/Ubication";
 import routes from "../../Routes/Rutas";
 import { NavLink } from "react-router-dom";
 
