@@ -362,35 +362,62 @@ const pop = {
 // Componente para la sección de características
 const FeaturesSection = () => {
   const features = [
-    {
-      icon: <FaDumbbell size={28} />,
-      title: 'Equipamiento Moderno',
-      description: 'Máquinas de última generación con mantenimiento al día.'
-    },
-    {
-      icon: <FaUsers size={28} />,
-      title: 'Comunidad Activa',
-      description: 'Ambiente enfocado, respeto por el proceso y progreso real.'
-    },
-    {
-      icon: <FaAward size={28} />,
-      title: 'Coaches Certificados',
-      description: 'Metodologías probadas y seguimiento técnico cercano.'
-    }
+    { icon: <FaDumbbell size={28} />, title: 'Equipamiento Moderno', description: 'Máquinas de última generación con mantenimiento al día.' },
+    { icon: <FaUsers size={28} />, title: 'Comunidad Activa', description: 'Ambiente enfocado, respeto por el proceso y progreso real.' },
+    { icon: <FaAward size={28} />, title: 'Coaches Certificados', description: 'Metodologías probadas y seguimiento técnico cercano.' }
   ];
 
-  return (
-    <section className="relative isolate bg-neutral-950 py-24 px-6 overflow-hidden">
-      <ParticlesBackground />
 
-      {/* Degradé leve para profundidad */}
+  return (
+    <section className="relative isolate overflow-hidden bg-black pt-24 pb-28 px-6 -mt-8">
+      {/* DIVISOR entre Hero y Features (onda metálica) */}
+      <div className="absolute -top-12 left-0 w-full h-12" aria-hidden>
+        <svg viewBox="0 0 1440 120" preserveAspectRatio="none" className="w-full h-full">
+          <path d="M0,120 C300,0 1140,240 1440,60 L1440,120 L0,120 Z" fill="url(#silverGrad)" />
+          <defs>
+            <linearGradient id="silverGrad" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0" stopColor="#e5e7eb" stopOpacity="0.10" />
+              <stop offset="0.5" stopColor="#9ca3af" stopOpacity="0.18" />
+              <stop offset="1" stopColor="#d1d5db" stopOpacity="0.10" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+
+      {/* CAPAS: aurora + grid + noise para continuidad con el Hero */}
+      <div aria-hidden className="pointer-events-none absolute inset-0 blur-2xl opacity-60">
+        <div className="absolute -top-24 -left-24 size-[32rem] rounded-full bg-[conic-gradient(from_180deg_at_50%_50%,rgba(59,130,246,0.10),rgba(6,182,212,0.08),rgba(99,102,241,0.08),transparent,rgba(6,182,212,0.08))]" />
+        <div className="absolute -bottom-16 -right-20 size-[36rem] rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.05),transparent_60%)]" />
+      </div>
+
+      {/* grid sutil con máscara central */}
       <div
         aria-hidden
-        className="absolute inset-0 bg-gradient-to-b from-white/5 via-transparent to-transparent"
+        className="pointer-events-none absolute inset-0 opacity-[0.22]"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+          WebkitMaskImage:
+            'radial-gradient(60% 50% at 50% 40%, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%)',
+          maskImage:
+            'radial-gradient(60% 50% at 50% 40%, rgba(0,0,0,1) 35%, rgba(0,0,0,0) 100%)'
+        }}
+      />
+      {/* noise para textura */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.06] mix-blend-soft-light"
+        style={{
+          backgroundImage:
+            'repeating-linear-gradient(0deg, rgba(255,255,255,.35) 0, rgba(255,255,255,.35) 1px, transparent 1px, transparent 3px)'
+        }}
       />
 
-      <div className="mx-auto max-w-6xl">
-        {/* Header con pop-up */}
+      <ParticlesBackground />
+
+      <div className="mx-auto max-w-6xl relative z-10">
+        {/* Header */}
         <motion.div
           variants={pop}
           initial="hidden"
@@ -401,12 +428,12 @@ const FeaturesSection = () => {
           <h2 className="text-white text-3xl md:text-4xl font-bold tracking-tight">
             Entrenamiento Redefinido
           </h2>
-          <p className="text-neutral-400 mt-3">
+          <p className="text-gray-300 mt-3">
             Tecnología, diseño y metodología al servicio de tu mejor versión.
           </p>
         </motion.div>
 
-        {/* Grid con stagger + pop-up en cada card */}
+        {/* Grid */}
         <motion.div
           variants={container}
           initial="hidden"
@@ -418,7 +445,6 @@ const FeaturesSection = () => {
             <motion.article
               key={f.title}
               variants={pop}
-              // pop-up on view
               className="
                 group relative rounded-2xl
                 bg-neutral-900/90
@@ -429,33 +455,27 @@ const FeaturesSection = () => {
                 overflow-hidden
                 motion-reduce:transform-none motion-reduce:transition-none
               "
-              // interacciones de siempre
               whileHover={{ rotateX: -6, rotateY: 6, y: -8 }}
               whileTap={{ scale: 0.995 }}
-              transition={{
-                type: 'spring',
-                stiffness: 180,
-                damping: 18,
-                mass: 0.6
-              }}
+              transition={{ type: 'spring', stiffness: 180, damping: 18, mass: 0.6 }}
             >
-              {/* Caras isométricas (top/side) */}
+              {/* Caras isométricas (ahora plata, no sky) */}
               <span
                 aria-hidden
                 className="
                   absolute inset-0 -z-10 rounded-2xl
                   before:content-[''] before:absolute before:-top-2 before:left-2
                   before:w-[calc(100%-4px)] before:h-3 before:rounded-t-2xl
-                  before:bg-gradient-to-r before:from-sky-700/30 before:to-cyan-600/30
+                  before:bg-gradient-to-r before:from-gray-500/30 before:to-gray-300/30
                   before:blur-[1px]
                   after:content-[''] after:absolute after:-left-2 after:top-2
                   after:w-3 after:h-[calc(100%-4px)] after:rounded-l-2xl
-                  after:bg-gradient-to-b after:from-sky-700/30 after:to-cyan-600/30
+                  after:bg-gradient-to-b after:from-gray-500/30 after:to-gray-300/30
                   after:blur-[1px]
                 "
               />
 
-              {/* Corte diagonal (detalle) */}
+              {/* Corte diagonal */}
               <span
                 aria-hidden
                 className="
@@ -465,12 +485,12 @@ const FeaturesSection = () => {
                 "
               />
 
-              {/* Borde activo sutil en hover */}
+              {/* Borde activo sutil en hover (plata) */}
               <span
                 aria-hidden
                 className="
                   pointer-events-none absolute inset-0 rounded-2xl
-                  ring-0 ring-sky-500/0 group-hover:ring-1 group-hover:ring-sky-500/30
+                  ring-0 ring-gray-300/0 group-hover:ring-1 group-hover:ring-gray-300/30
                   transition-all duration-300
                 "
               />
@@ -488,21 +508,21 @@ const FeaturesSection = () => {
                 "
                 style={{ transform: 'translateZ(40px) rotate(45deg)' }}
               >
-                <div className="-rotate-45 text-sky-400 group-hover:text-cyan-300 transition-colors duration-300">
+                <div className="-rotate-45 text-gray-200 group-hover:text-gray-100 transition-colors duration-300">
                   {f.icon}
                 </div>
               </motion.div>
 
-              {/* Título y descripción */}
+              {/* titulo y descripcion */}
               <h3 className="mt-6 text-white text-xl font-semibold tracking-tight">
                 {f.title}
               </h3>
-              <p className="mt-2 text-neutral-400 leading-relaxed">
+              <p className="mt-2 text-gray-300 leading-relaxed">
                 {f.description}
               </p>
 
-              {/* Línea base (acento) */}
-              <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-sky-600 via-cyan-500 to-sky-600 opacity-40 group-hover:opacity-70 transition-opacity duration-300 rounded-b-2xl" />
+              {/* Linea base (acento plata) */}
+              <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-gray-400 via-gray-200 to-gray-400 opacity-40 group-hover:opacity-70 transition-opacity duration-300 rounded-b-2xl" />
             </motion.article>
           ))}
         </motion.div>
@@ -510,6 +530,8 @@ const FeaturesSection = () => {
     </section>
   );
 };
+
+
 
 // Componente para la sección de testimonios
 const TestimonialsSection = () => {
