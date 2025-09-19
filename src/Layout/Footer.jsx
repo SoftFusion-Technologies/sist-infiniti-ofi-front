@@ -1,47 +1,57 @@
 import React from "react";
 import { FaInstagram, FaFacebookF, FaTiktok, FaWhatsapp } from "react-icons/fa";
+import { NavLink } from "react-router-dom";
 
 const Footer = () => {
   const socialLinks = [
-    { icon: <FaInstagram />, href: "#" },
-    { icon: <FaFacebookF />, href: "#" },
-    { icon: <FaTiktok />, href: "#" },
-    { icon: <FaWhatsapp />, href: "#" },
+    { icon: <FaInstagram />, href: "#", name: "Instagram" },
+    { icon: <FaFacebookF />, href: "#", name: "Facebook" },
+    { icon: <FaTiktok />, href: "#", name: "Tiktok" },
+    { icon: <FaWhatsapp />, href: "#", name: "Whatsapp" },
   ];
 
   const sections = [
     {
       title: "Navegación",
-      links: ["Socios", "Espacios", "Coaches", "Horarios"],
+      links: [
+        { name: "Socios", path: "/socios" },
+        { name: "Espacios", path: "/espacios" },
+        { name: "Suplementos", path: "/suplementos" },
+        { name: "Horarios", path: "/horarios" },
+      ],
     },
     {
       title: "Legal",
-      links: ["Política de Privacidad", "Términos de Uso", "Contacto"],
+      links: [
+        { name: "Política de Privacidad", path: "/privacy" },
+        { name: "Términos de Uso", path: "/terms" },
+        { name: "Contacto", path: "/contact" },
+      ],
     },
   ];
 
   return (
-    <footer className="bg-black text-gray-300 border-t-2 border-orange-600">
-      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+    <footer className="relative bg-black text-gray-400">
+      {/* Borde superior con gradiente metálico */}
+      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-gray-600 to-transparent" />
+
+      <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Columna del Logo y Redes Sociales */}
-          <div className="space-y-4">
-            <a
-              href="#"
-              className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-600"
-            >
+          <div className="space-y-6">
+            <NavLink to="/" className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-slate-300 via-slate-100 to-slate-400">
               INFINITY
-            </a>
-            <p className="text-sm">
+            </NavLink>
+            <p className="text-sm text-slate-500">
               Forjando tu mejor versión, un día a la vez.
             </p>
             <div className="flex space-x-4">
-              {socialLinks.map((social, index) => (
+              {socialLinks.map((social) => (
                 <a
-                  key={index}
+                  key={social.name}
                   href={social.href}
-                  className="text-gray-400 hover:text-orange-500 transition-colors duration-300"
-                  aria-label={`Link a ${social.href}`}
+                  className="text-slate-500 hover:text-white transition-colors duration-300"
+                  aria-label={social.name}
                 >
                   {React.cloneElement(social.icon, { size: 20 })}
                 </a>
@@ -52,18 +62,18 @@ const Footer = () => {
           {/* Columnas de Links */}
           {sections.map((section) => (
             <div key={section.title}>
-              <h3 className="text-sm font-semibold text-gray-100 tracking-wider uppercase">
+              <h3 className="text-sm font-semibold text-slate-300 tracking-wider uppercase">
                 {section.title}
               </h3>
-              <ul className="mt-4 space-y-2">
+              <ul className="mt-4 space-y-3">
                 {section.links.map((link) => (
-                  <li key={link}>
-                    <a
-                      href="#"
-                      className="text-base text-gray-400 hover:text-white transition-colors duration-300"
+                  <li key={link.name}>
+                    <NavLink
+                      to={link.path}
+                      className="text-base text-slate-400 hover:text-white transition-colors duration-300"
                     >
-                      {link}
-                    </a>
+                      {link.name}
+                    </NavLink>
                   </li>
                 ))}
               </ul>
@@ -72,10 +82,10 @@ const Footer = () => {
 
           {/* Columna de Contacto */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-100 tracking-wider uppercase">
+            <h3 className="text-sm font-semibold text-slate-300 tracking-wider uppercase">
               Contacto
             </h3>
-            <ul className="mt-4 space-y-2 text-base text-gray-400">
+            <ul className="mt-4 space-y-3 text-base text-slate-400">
               <li>Lamadrid 986 - Tucumán</li>
               <li>L-V: 7:00 a 22:00 hs</li>
               <li>contacto@infinity.com</li>
@@ -84,18 +94,18 @@ const Footer = () => {
         </div>
 
         {/* Copyright */}
-        <div className="mt-12 border-t border-gray-800 pt-8 text-center">
-          <p className="text-base text-gray-500">
+        <div className="mt-16 border-t border-neutral-800 pt-8 text-center">
+          <p className="text-base text-slate-500">
             &copy; {new Date().getFullYear()} INFINITY Academia. Todos los
             derechos reservados.
           </p>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm text-slate-600 mt-2">
             Página creada y mantenida por{" "}
             <a
               href="https://softfusion.com.ar/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-orange-500 hover:text-orange-500 transition-colors duration-300"
+              className="text-gray-200 hover:text-slate-300 transition-colors duration-300"
             >
               SoftFusion
             </a>
