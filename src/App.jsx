@@ -17,10 +17,8 @@ export default function App() {
       {/* El Navbar se mostrará en todas las páginas si está fuera de <Routes> */}
       <Navbar />
       <Routes>
-        {/* Ruta pública para Login */}
         <Route path="/login" element={<Login />} />
 
-        {/* Rutas protegidas */}
         {routes.map((route, index) => (
           <Route key={index} path={route.path} element={route.element} />
         ))}

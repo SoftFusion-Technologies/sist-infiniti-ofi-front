@@ -127,7 +127,7 @@ const Socios = () => {
               PARTNERS
             </span>
           </h1>
-          <p className="mt-4 text-xl text-gray-300 max-w-3xl mx-auto">
+          <p className="mt-4 text-xl text-gray-300 max-w-3xl mx-auto ">
             Por ser miembro de INFINITY, accedés a beneficios exclusivos con
             marcas y servicios aliados.
           </p>

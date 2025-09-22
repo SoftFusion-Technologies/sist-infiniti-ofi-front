@@ -1,8 +1,10 @@
 import React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { FaWhatsapp } from "react-icons/fa"; // Importar el ícono de WhatsApp
-import { naranja } from "../../constants/colores";
+import { motion } from "framer-motion";
+import { FaWhatsapp, FaDumbbell, FaUser, FaIdCard, FaPhone } from "react-icons/fa";
+import { CgGym } from "react-icons/cg";
+import ParticlesBackground from "../../components/ParticlesBackground";
 
 const ClasePrueba = () => {
   // Define el esquema de validación con Yup
@@ -57,19 +59,20 @@ const ClasePrueba = () => {
   const renderError = (field) =>
     formik.touched[field] &&
     formik.errors[field] && (
-      <p className="text-red-500 text-xs mt-1">{formik.errors[field]}</p>
+      <p className="text-red-400 text-sm mt-1">{formik.errors[field]}</p>
     );
 
   // Objeto para definir los campos del formulario
   const formFields = [
-    { name: "nombre", label: "Nombre", type: "text", autoFocus: true },
-    { name: "apellido", label: "Apellido", type: "text" },
-    { name: "dni", label: "DNI", type: "text" },
-    { name: "telefono", label: "Número de Teléfono", type: "tel" },
+    { name: "nombre", label: "Nombre", type: "text", autoFocus: true, icon: FaUser },
+    { name: "apellido", label: "Apellido", type: "text", icon: FaUser },
+    { name: "dni", label: "DNI", type: "text", icon: FaIdCard },
+    { name: "telefono", label: "Número de Teléfono", type: "tel", icon: FaPhone },
     {
       name: "objetivos",
       label: "¿Cuál es tu principal objetivo?",
       type: "select",
+      icon: CgGym,
       options: [
         { value: "", label: "Selecciona una opción" },
         { value: "perder_peso", label: "Perder peso" },
@@ -80,84 +83,182 @@ const ClasePrueba = () => {
     },
   ];
 
-  const inputStyles =
-    "mt-1 block w-full bg-gray-800 border border-gray-700 rounded-md shadow-sm py-2 px-3 text-white focus:outline-none focus:ring-orange-500 focus:border-orange-500";
+  // Animaciones
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5 },
+    },
+  };
 
   return (
-    <div className="bg-gray-950 flex items-center justify-center py-12 px-4">
-      <div className="max-w-2xl w-full bg-black p-8 rounded-xl shadow-2xl shadow-orange-500/20 border border-gray-800">
-        <h2 className="text-3xl font-bold text-white text-center mb-2">
-          Solicita tu Clase de Prueba
-        </h2>
-        <p className="text-center text-gray-400 mb-8">
-          Completa el formulario y da el primer paso hacia tu mejor versión.
-        </p>
-        <form onSubmit={formik.handleSubmit} className="space-y-6">
-          {formFields.map((field) => (
-            <div key={field.name}>
-              <label
-                htmlFor={field.name}
-                className="block text-sm font-medium text-gray-300"
-              >
-                {field.label}
-              </label>
-              {field.type === "select" ? (
-                <select
-                  id={field.name}
-                  name={field.name}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values[field.name]}
-                  className={inputStyles}
-                >
-                  {field.options.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              ) : (
-                <input
-                  id={field.name}
-                  name={field.name}
-                  type={field.type}
-                  autoFocus={field.autoFocus || false}
-                  onChange={formik.handleChange}
-                  onBlur={formik.handleBlur}
-                  value={formik.values[field.name]}
-                  className={inputStyles}
-                />
-              )}
-              {renderError(field.name)}
-            </div>
-          ))}
-
-          <div>
-            <button
-              type="submit"
-              className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-gradient-to-r from-orange-500 to-orange-600 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500 focus:ring-offset-gray-900 transition-opacity"
-            >
-              ENVIAR SOLICITUD
-            </button>
-          </div>
-        </form>
-        {/* Sección de WhatsApp */}
-        <div className="text-center mt-8 border-t border-gray-800 pt-6">
-          <p className="text-gray-400 text-sm mb-3">
-            O si lo prefieres, contáctanos directamente:
-          </p>
-          <a
-            href="https://wa.me/3854382934" // Número ficticio de Argentina
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-semibold text-white hover:bg-green-500 transition-colors"
-          >
-            <FaWhatsapp size={20} />
-            <span>Chatear por WhatsApp</span>
-          </a>
-        </div>
+    <section className="relative isolate overflow-hidden bg-black text-white min-h-screen py-24">
+      {/* Fondo galáctico */}
+      <ParticlesBackground />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 blur-2xl opacity-60"
+      >
+        <div className="absolute -top-24 -left-24 size-[36rem] rounded-full bg-[conic-gradient(from_180deg_at_50%_50%,rgba(59,130,246,0.12),rgba(6,182,212,0.10),rgba(99,102,241,0.10),transparent,rgba(6,182,212,0.10))]" />
+        <div className="absolute -bottom-24 -right-20 size-[40rem] rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.06),transparent_60%)]" />
       </div>
-    </div>
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 opacity-[0.22]"
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,.05) 1px, transparent 1px)',
+          backgroundSize: '40px 40px',
+          WebkitMaskImage:
+            'radial-gradient(60% 50% at 50% 40%, rgba(0,0,0,1) 36%, rgba(0,0,0,0) 100%)',
+          maskImage:
+            'radial-gradient(60% 50% at 50% 40%, rgba(0,0,0,1) 36%, rgba(0,0,0,0) 100%)'
+        }}
+      />
+
+      <div className="relative z-10 flex items-center justify-center px-4">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="max-w-2xl w-full"
+        >
+          {/* Contenedor principal con el mismo estilo que las otras páginas */}
+          <div className="relative rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur-xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.45)]">
+            {/* Aurora suave */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -top-20 -left-20 size-[28rem] rounded-full blur-2xl opacity-60 bg-[conic-gradient(from_180deg_at_50%_50%,rgba(59,130,246,0.12),rgba(6,182,212,0.10),rgba(99,102,241,0.10),transparent,rgba(6,182,212,0.10))]"
+            />
+            
+            {/* Ribete metálico */}
+            <span
+              aria-hidden
+              className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-transparent"
+              style={{ boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.08)' }}
+            />
+
+            <div className="relative z-10 p-8">
+              {/* Encabezado */}
+              <motion.div 
+                variants={itemVariants} 
+                className="text-center mb-8"
+              >
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <FaDumbbell className="text-3xl text-gray-300" />
+                  <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
+                    TU PRIMERA{' '}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-100 via-gray-300 to-gray-400">
+                      CLASE GRATIS
+                    </span>
+                  </h1>
+                </div>
+                <p className="text-gray-300 text-lg">
+                  Completa el formulario y da el primer paso hacia tu mejor versión.
+                </p>
+              </motion.div>
+
+              {/* Formulario */}
+              <form onSubmit={formik.handleSubmit} className="space-y-6">
+                {formFields.map((field, index) => (
+                  <motion.div 
+                    key={field.name}
+                    variants={itemVariants}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <label
+                      htmlFor={field.name}
+                      className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2"
+                    >
+                      <field.icon className="text-gray-400" />
+                      {field.label}
+                    </label>
+                    
+                    {field.type === "select" ? (
+                      <select
+                        id={field.name}
+                        name={field.name}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values[field.name]}
+                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300/30 focus:border-transparent transition-all backdrop-blur-sm"
+                      >
+                        {field.options.map((option) => (
+                          <option key={option.value} value={option.value} className="bg-gray-900 text-white">
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        id={field.name}
+                        name={field.name}
+                        type={field.type}
+                        autoFocus={field.autoFocus || false}
+                        onChange={formik.handleChange}
+                        onBlur={formik.handleBlur}
+                        value={formik.values[field.name]}
+                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300/30 focus:border-transparent transition-all backdrop-blur-sm"
+                        placeholder={`Ingresa tu ${field.label.toLowerCase()}`}
+                      />
+                    )}
+                    {renderError(field.name)}
+                  </motion.div>
+                ))}
+
+                <motion.div variants={itemVariants}>
+                  <button
+                    type="submit"
+                    className="w-full px-8 py-4 font-bold text-gray-900 rounded-lg text-lg
+                               bg-gradient-to-r from-gray-100 via-gray-200 to-gray-400
+                               transition-all duration-200 hover:brightness-110 hover:-translate-y-[2px] active:translate-y-0
+                               shadow-[0_0_18px_rgba(255,255,255,0.55)] relative overflow-hidden"
+                  >
+                    <span className="relative z-10 uppercase tracking-wide">
+                      SOLICITAR CLASE GRATIS
+                    </span>
+                    <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500" />
+                  </button>
+                </motion.div>
+              </form>
+
+              {/* Sección de WhatsApp */}
+              <motion.div variants={itemVariants} className="text-center mt-8 pt-6 border-t border-white/10">
+                <p className="text-gray-400 text-sm mb-4">
+                  ¿Prefieres contactarnos directamente?
+                </p>
+                <a
+                  href="https://wa.me/3854382934"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-3 rounded-lg bg-green-600/20 border border-green-500/30 backdrop-blur-sm px-6 py-3 text-green-400 font-semibold hover:bg-green-600/30 hover:border-green-500/50 transition-all duration-200 hover:-translate-y-[1px]"
+                >
+                  <FaWhatsapp size={20} />
+                  <span>Chatear por WhatsApp</span>
+                </a>
+              </motion.div>
+            </div>
+
+            {/* Línea base metálica */}
+            <div className="absolute bottom-0 left-0 w-full h-[3px] bg-gradient-to-r from-gray-400 via-gray-200 to-gray-400 opacity-35 rounded-b-2xl" />
+          </div>
+        </motion.div>
+      </div>
+    </section>
   );
 };
 
