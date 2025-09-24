@@ -5,22 +5,16 @@ import SeccionTestimonios from "../../components/SeccionTestimonios";
 import HeroSection from "../../components/HeroSection";
 import FeaturesSection from "../../components/FeaturesSection";
 import EntranamientosAdaptan from "../../components/EntranamientosAdaptan";
+import Banner from "../../components/Banner";
 
 const Home = () => {
   return (
     <div className="bg-gray-900 text-white">
       <HeroSection />
-      <SeparadorDecorativo
-        variant="diagonal"
-        opacity={0.4}
-        direction="up"
-        height="medium"
-        colorStart="#1f2937"
-        colorEnd="#4b5563"
-      />
+      <Banner />
       <EntranamientosAdaptan />
       <SeparadorDecorativo
-        variant="wave"
+        variant="diagonal"
         opacity={0.4}
         direction="up"
         height="medium"

@@ -3,6 +3,8 @@ import Navbar from "./Layout/Navbar.jsx";
 import routes from "./Routes/Rutas.jsx";
 import Login from "./Pages/Admin/Login.jsx";
 import Footer from "./Layout/Footer.jsx";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 function Protected({ children }) {
   const token = localStorage.getItem("token");
@@ -11,14 +13,20 @@ function Protected({ children }) {
 
 export default function App() {
   const token = localStorage.getItem("token");
+  const location = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [location.pathname]);
 
   return (
     <div>
       {/* El Navbar se mostrará en todas las páginas si está fuera de <Routes> */}
       <Navbar />
       <Routes>
+        {/* Ruta pública para Login */}
         <Route path="/login" element={<Login />} />
 
+        {/* Rutas protegidas */}
         {routes.map((route, index) => (
           <Route key={index} path={route.path} element={route.element} />
         ))}
