@@ -85,7 +85,7 @@ const Espacios = () => {
   };
 
   return (
-    <section className="relative isolate overflow-hidden bg-black text-white min-h-screen py-16 sm:py-20 lg:py-24 mt-5">
+    <section className="relative isolate overflow-hidden bg-black text-white min-h-screen py-16 sm:py-20 lg:py-24 mt-10">
       <ParticlesBackground />
       <div
         aria-hidden
@@ -102,7 +102,7 @@ const Espacios = () => {
           transition={{ duration: 0.7, ease: 'easeOut' }}
           className="text-center mb-12 sm:mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-druk uppercase text-transparent bg-clip-text bg-gradient-to-r from-gray-100 via-gray-300 to-gray-400 mb-4 sm:mb-6 leading-tight">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-druk uppercase text-transparent bg-clip-text bg-gradient-to-r from-gray-100 via-gray-300 to-gray-400 mb-4 sm:mb-6 leading-tight font-extrabold tracking-tight">
             Nuestros{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-400 via-slate-100 to-slate-500">
               Espacios

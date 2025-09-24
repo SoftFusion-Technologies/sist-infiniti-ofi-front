@@ -106,7 +106,7 @@ const ClasePrueba = () => {
   };
 
   return (
-    <section className="relative isolate overflow-hidden bg-black text-white min-h-screen py-24">
+    <section className="relative isolate overflow-hidden bg-black text-white min-h-screen py-24 mt-10">
       {/* Fondo galáctico */}
       <ParticlesBackground />
       <div

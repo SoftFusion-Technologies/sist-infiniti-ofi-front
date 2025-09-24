@@ -80,7 +80,7 @@ const Socios = () => {
   const addressCTA = `Únete a la familia INFINITY para acceder a descuentos y promociones exclusivas de nuestros partners.`;
 
   return (
-    <section className="relative isolate overflow-hidden bg-black text-white min-h-screen py-24">
+    <section className="relative isolate overflow-hidden bg-black text-white min-h-screen py-24 mt-10">
       {/* Fondo galáctico */}
       <ParticlesBackground />
       <div
@@ -121,9 +121,9 @@ const Socios = () => {
           transition={{ type: 'spring', stiffness: 220, damping: 20 }}
           className="text-center mb-16"
         >
-          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-druk uppercase text-transparent bg-clip-text bg-gradient-to-r from-gray-100 via-gray-300 to-gray-400 mb-4 sm:mb-6 leading-tight font-extrabold tracking-tight">
             NUESTROS{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-gray-100 via-gray-300 to-gray-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-400 via-slate-100 to-slate-500">
               PARTNERS
             </span>
           </h1>
