@@ -85,7 +85,7 @@ const Espacios = () => {
   };
 
   return (
-    <section className="relative isolate overflow-hidden bg-black text-white min-h-screen py-16 sm:py-20 lg:py-24 mt-10">
+    <section className="relative isolate overflow-hidden bg-black text-white min-h-screen py-16 sm:py-20 lg:py-24">
       <ParticlesBackground />
       <div
         aria-hidden
@@ -94,7 +94,7 @@ const Espacios = () => {
         <div className="absolute -top-12 -left-12 sm:-top-24 sm:-left-24 size-[20rem] sm:size-[36rem] rounded-full bg-[conic-gradient(from_180deg_at_50%_50%,rgba(59,130,246,0.12),rgba(6,182,212,0.10),rgba(99,102,241,0.10),transparent,rgba(6,182,212,0.10))]" />
         <div className="absolute -bottom-12 -right-10 sm:-bottom-24 sm:-right-20 size-[24rem] sm:size-[40rem] rounded-full bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.06),transparent_60%)]" />
       </div>
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
         {/* Encabezado */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}

@@ -64,7 +64,7 @@ const ClasePrueba = () => {
 
   // Objeto para definir los campos del formulario
   const formFields = [
-    { name: "nombre", label: "Nombre", type: "text", autoFocus: true, icon: FaUser },
+    { name: "nombre", label: "Nombre", type: "text", icon: FaUser },
     { name: "apellido", label: "Apellido", type: "text", icon: FaUser },
     { name: "dni", label: "DNI", type: "text", icon: FaIdCard },
     { name: "telefono", label: "Número de Teléfono", type: "tel", icon: FaPhone },
@@ -106,7 +106,7 @@ const ClasePrueba = () => {
   };
 
   return (
-    <section className="relative isolate overflow-hidden bg-black text-white min-h-screen py-24 mt-10">
+    <section className="relative isolate overflow-hidden bg-black text-white min-h-screen py-24">
       {/* Fondo galáctico */}
       <ParticlesBackground />
       <div
@@ -130,7 +130,7 @@ const ClasePrueba = () => {
         }}
       />
 
-      <div className="relative z-10 flex items-center justify-center px-4">
+      <div className="relative z-10 flex items-center justify-center px-2 mt-10">
         <motion.div
           variants={containerVariants}
           initial="hidden"
@@ -208,7 +208,6 @@ const ClasePrueba = () => {
                         id={field.name}
                         name={field.name}
                         type={field.type}
-                        autoFocus={field.autoFocus || false}
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
                         value={formik.values[field.name]}

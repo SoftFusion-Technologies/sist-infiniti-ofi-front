@@ -70,7 +70,7 @@ const Horarios = () => {
   };
 
   return (
-    <section className="relative isolate overflow-hidden bg-black text-white py-20 md:py-28 mt-10">
+    <section className="relative isolate overflow-hidden bg-black text-white py-20 md:py-28">
       {/* Partículas + auroras + grid + noise (mismo lenguaje del Hero) */}
       <ParticlesBackground />
       <div
@@ -151,7 +151,7 @@ const Horarios = () => {
       </div>
 
       {/* Contenido */}
-      <div className="relative z-10 max-w-5xl mx-auto px-6">
+      <div className="relative z-10 max-w-5xl mx-auto px-6 mt-10">
         {/* Cabecera */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}

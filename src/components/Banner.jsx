@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 // Array de imágenes del gimnasio
 const imagenesGimnasio = Array.from(
@@ -7,7 +7,7 @@ const imagenesGimnasio = Array.from(
 );
 
 // Frases motivacionales
-const frasesMotivacion = [
+const frasesMotivacionales = [
   "RESULTADOS QUE HABLAN.",
   "ENTRENAMIENTOS QUE TRANSFORMAN.",
   "Superá tus límites cada día.",
@@ -21,16 +21,16 @@ const frasesMotivacion = [
   "Sé más fuerte que tus excusas.",
   "El gimnasio es tu zona de poder.",
   "La motivación te impulsa, el hábito te mantiene.",
-  "Entrena con pasión, vive con propósito.",
+  "Entrená con pasión, viví con propósito.",
   "El progreso es mejor que la perfección.",
-  "Hazlo por la versión de ti que quieres ser.",
-  "No te compares, supérate.",
-  "Hoy entrenas, mañana triunfas.",
+  "Hazlo por la versión de ti que querés ser.",
+  "No te compares, superate.",
+  "Hoy entrenás, mañana triunfás.",
   "El éxito es la suma de pequeños esfuerzos.",
   "La meta no es ser mejor que otros, es ser mejor que ayer.",
   "Hazlo por el placer de lograrlo.",
-  "La energía que inviertes vuelve multiplicada.",
-  "Entrena duro, sueña en grande.",
+  "La energía que invertís vuelve multiplicada.",
+  "Entrená duro, soñá en grande.",
   "El movimiento es vida.",
   "No te detengas hasta que te sientas orgulloso.",
   "La perseverancia te hace invencible.",
@@ -38,53 +38,83 @@ const frasesMotivacion = [
   "Hoy es el mejor día para empezar.",
   "El gimnasio es tu templo.",
   "La fuerza se construye, no se hereda.",
-  "Entrena con propósito, vive con pasión.",
+  "Entrená con propósito, viví con pasión.",
   "El sudor es tu medalla diaria.",
   "La superación es tu mejor recompensa.",
-  "Hazlo por ti, por tu salud, por tu futuro.",
+  "Hazlo por vos, por tu salud, por tu futuro.",
+  "Bienvenido a INFINITY Academia, donde tus metas son nuestra misión.",
+  "No importa tu nivel, aquí todos comienzan con un primer paso.",
+  "Tu bienestar es nuestra prioridad, entrená a tu ritmo.",
+  "Cada repetición cuenta, cada esfuerzo vale la pena.",
+  "Transformá tu día con energía y movimiento.",
+  "En INFINITY Academia, cada día es una oportunidad para mejorar.",
+  "Entrená con amigos, creá recuerdos, alcanzá tus metas.",
+  "Tu salud es tu riqueza, cuidala con nosotros.",
+  "No importa la experiencia, importa la actitud.",
+  "Un gimnasio para todos, un lugar para vos.",
+  "Descubrí tu mejor versión en INFINITY Academia.",
+  "Entrená con confianza, viví con energía.",
+  "Tu esfuerzo inspira, tu progreso motiva.",
+  "En INFINITY Academia, cada logro es celebrado.",
+  "Un espacio para crecer, un lugar para triunfar.",
+  "Entrená hoy, disfrutá mañana.",
+  "Tu cuerpo te lo agradecerá, tu mente también.",
+  "La comunidad INFINITY te espera, ¡sumate hoy!",
 ];
 
-// Selecciona una imagen y dos frases aleatorias
-const imgBanner =
-  imagenesGimnasio[Math.floor(Math.random() * imagenesGimnasio.length)];
-const frase1 =
-  frasesMotivacion[Math.floor(Math.random() * frasesMotivacion.length)];
-let frase2 =
-  frasesMotivacion[Math.floor(Math.random() * frasesMotivacion.length)];
-if (frase2 === frase1)
-  frase2 =
-    frasesMotivacion[
-      (frasesMotivacion.indexOf(frase1) + 1) % frasesMotivacion.length
-    ];
+// Estado global para evitar repeticiones
+const imagenesUsadas = new Set();
+const frasesUsadas = new Set();
 
-const Banner = () => (
-  <section className="relative w-full h-[340px] md:h-[420px] lg:h-[480px] flex items-stretch overflow-hidden bg-black">
-    {/* Imagen de fondo */}
-    <img
-      src={imgBanner}
-      alt="Banner gimnasio"
-      className="absolute inset-0 w-full h-full object-cover object-center opacity-80"
-      style={{ filter: "brightness(0.7) grayscale(0.2)" }}
-      aria-hidden
-    />
-    {/* Overlay oscuro para el texto */}
-    <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent" />
-    {/* Contenido */}
-    <div className="relative z-10 flex flex-col md:flex-row w-full h-full">
-      <div className="flex flex-col justify-center items-start px-6 md:px-12 lg:px-20 py-8 md:py-0 w-full md:w-1/2">
-        <h1 className="font-druk text-3xl md:text-5xl lg:text-6xl leading-tight uppercase mb-2 text-white drop-shadow-lg">
-          {frase1}
-        </h1>
-        <span className="font-druk text-2xl md:text-4xl lg:text-5xl leading-tight uppercase mt-2 block text-transparent bg-clip-text bg-gradient-to-r from-slate-400 via-slate-100 to-slate-500 drop-shadow-lg">
-          {frase2}
-        </span>
+const obtenerElementoUnico = (array, conjuntoUsado) => {
+  const elementosDisponibles = array.filter((item) => !conjuntoUsado.has(item));
+  if (elementosDisponibles.length === 0) {
+    conjuntoUsado.clear(); // Reinicia el ciclo si se agotan las opciones
+    return array[Math.floor(Math.random() * array.length)];
+  }
+  const elemento = elementosDisponibles[Math.floor(Math.random() * elementosDisponibles.length)];
+  conjuntoUsado.add(elemento);
+  return elemento;
+};
+
+const Banner = ({ altura = "h-[340px] md:h-[420px] lg:h-[480px]", texto_1="text-3xl md:text-5xl lg:text-6xl", texto_2="text-2xl md:text-4xl lg:text-5xl" }) => {
+  const imagenBanner = obtenerElementoUnico(imagenesGimnasio, imagenesUsadas);
+  const frase1 = obtenerElementoUnico(frasesMotivacionales, frasesUsadas);
+  let frase2 = obtenerElementoUnico(frasesMotivacionales, frasesUsadas);
+
+  if (frase2 === frase1) {
+    frase2 = frasesMotivacionales[(frasesMotivacionales.indexOf(frase1) + 1) % frasesMotivacionales.length];
+  }
+
+  return (
+    <section className={`relative w-full ${altura} flex items-stretch overflow-hidden bg-black`}>
+      {/* Imagen de fondo */}
+      <img
+        src={imagenBanner}
+        alt="Banner gimnasio"
+        className="absolute inset-0 w-full h-full object-cover object-center opacity-80"
+        style={{ filter: "brightness(0.7) grayscale(0.2)" }}
+        aria-hidden
+      />
+      {/* Overlay oscuro para el texto */}
+      <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent" />
+      {/* Contenido */}
+      <div className="relative z-10 flex flex-col md:flex-row w-full h-full">
+        <div className="flex flex-col justify-center items-start px-6 md:px-12 lg:px-20 py-8 md:py-0 w-full md:w-1/2">
+          <h1 className={`font-druk ${texto_1} leading-tight uppercase mb-2 text-white drop-shadow-lg`}>
+            {frase1}
+          </h1>
+          <span className={`font-druk ${texto_2} leading-tight uppercase mt-2 block text-transparent bg-clip-text bg-gradient-to-r from-slate-400 via-slate-100 to-slate-500 drop-shadow-lg`}>
+            {frase2}
+          </span>
+        </div>
+        <div className="hidden md:block w-1/2" />
+        {/* Difuminado negro arriba y abajo */}
+        <div className="absolute top-0 left-0 w-full h-16 bg-gradient-to-b from-black/90 to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-black/90 to-transparent pointer-events-none" />
       </div>
-      <div className="hidden md:block w-1/2" />
-  {/* Difuminado negro arriba y abajo */}
-  <div className="absolute top-0 left-0 w-full h-16 bg-gradient-to-b from-black/90 to-transparent pointer-events-none" />
-  <div className="absolute bottom-0 left-0 w-full h-16 bg-gradient-to-t from-black/90 to-transparent pointer-events-none" />
-    </div>
-  </section>
-);
+    </section>
+  );
+};
 
 export default Banner;

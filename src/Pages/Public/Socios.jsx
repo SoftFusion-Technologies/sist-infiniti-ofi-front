@@ -80,7 +80,7 @@ const Socios = () => {
   const addressCTA = `Únete a la familia INFINITY para acceder a descuentos y promociones exclusivas de nuestros partners.`;
 
   return (
-    <section className="relative isolate overflow-hidden bg-black text-white min-h-screen py-24 mt-10">
+    <section className="relative isolate overflow-hidden bg-black text-white min-h-screen py-24">
       {/* Fondo galáctico */}
       <ParticlesBackground />
       <div
@@ -112,7 +112,7 @@ const Socios = () => {
         }}
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 mt-10">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}

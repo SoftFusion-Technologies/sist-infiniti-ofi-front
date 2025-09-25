@@ -51,7 +51,7 @@ const Suplementos = () => {
     .filter((producto) => producto.nombre.toLowerCase().includes(terminoBusqueda.toLowerCase()));
 
   return (
-    <div className="bg-black min-h-screen mt-10">
+    <div className="bg-black min-h-screen">
       <EncabezadoSuplementos />
       <BarraDeFiltros
         terminoBusqueda={terminoBusqueda}
