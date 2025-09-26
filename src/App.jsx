@@ -1,31 +1,49 @@
-import { Routes, Route, Link, Navigate } from "react-router-dom";
-import Navbar from "./Layout/Navbar.jsx";
-import routes from "./Routes/Rutas.jsx";
-import Login from "./Pages/Admin/Login.jsx";
-import Footer from "./Layout/Footer.jsx";
-import { useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { Routes, Route, Link, Navigate } from 'react-router-dom';
+import {lazy} from 'react'
+import Navbar from './Layout/Navbar.jsx';
+import routes from './Routes/Rutas.jsx';
+import Login from './Pages/Admin/Login.jsx';
+import Footer from './Layout/Footer.jsx';
+import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import ProtectedRoute from './ProtectedRoute.jsx';
 
-function Protected({ children }) {
-  const token = localStorage.getItem("token");
-  return token ? children : <Navigate to="/login" replace />;
-}
+import { AuthProvider } from './AuthContext';
+import LoginForm from './components/login/LoginForm.jsx';
+
+// cambio agregado por Benjamin Orellana
+// aqui dentro ponemos las rutas en las que no queremos mostrar el nav
+import { hiddenNavbarRoutes } from './Helpers/uiConfig';
+
+const AdminPage = lazy(() => import('./Pages/staff/AdminPage'));
+
 
 export default function App() {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem('token');
   const location = useLocation();
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [location.pathname]);
 
+  const hideNavbar = hiddenNavbarRoutes.includes(location.pathname);
+
   return (
-    <div>
+    <AuthProvider>
       {/* El Navbar se mostrará en todas las páginas si está fuera de <Routes> */}
-      <Navbar />
+      {!hideNavbar && <Navbar />}
       <Routes>
         {/* Ruta pública para Login */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<LoginForm />} />
 
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              {' '}
+              <AdminPage />{' '}
+            </ProtectedRoute>
+          }
+        />
         {/* Rutas protegidas */}
         {routes.map((route, index) => (
           <Route key={index} path={route.path} element={route.element} />
@@ -38,26 +56,6 @@ export default function App() {
         <Route path="*" element={<div>404 - Página no encontrada</div>} />
       </Routes>
       <Footer />
-    </div>
+    </AuthProvider>
   );
 }
-
-/*       <Routes>
-      <header style={{ display: 'flex', gap: 12, marginBottom: 16 }}>
-        <Link to="/">Home</Link>
-      </header>
-
-
-        <Route
-          path="/"
-          element={
-            <Protected>
-              <Home />
-            </Protected>
-          }
-        />
-        {/* <Route path="/login" element={<Login />} /> *
-        <Route path="*" element={<div>404</div>} />
-      </Routes> 
-      
-      */
