@@ -80,6 +80,17 @@ const NavbarStaff = () => {
     navigate('/inicio');
   };
 
+  // hook de bloqueo de scroll del body
+  useEffect(() => {
+    if (drawerOpen) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = prev;
+      };
+    }
+  }, [drawerOpen]);
+
   return (
     <header className="sticky top-0 z-50">
       {/* barra “glass aurora” */}
@@ -304,17 +315,21 @@ const NavbarStaff = () => {
       </nav>
 
       {/* Drawer móvil */}
+      {/* Drawer móvil */}
       <AnimatePresence>
         {drawerOpen && (
           <>
+            {/* Backdrop */}
             <motion.div
               key="backdrop"
               initial={{ opacity: 0 }}
               animate={{ opacity: 0.45 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black"
+              className="fixed inset-0 bg-black z-[60]"
               onClick={() => setDrawerOpen(false)}
             />
+
+            {/* Panel */}
             <motion.aside
               key="panel"
               initial={{ x: '100%' }}
@@ -322,13 +337,17 @@ const NavbarStaff = () => {
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 22, stiffness: 240 }}
               className="
-            fixed right-0 top-0 h-full w-[86%] max-w-sm
-            bg-[linear-gradient(160deg,rgba(15,18,36,.95),rgba(15,18,36,.9))]
-            before:absolute before:inset-0 before:bg-[radial-gradient(60%_100%_at_50%_-10%,rgba(252,75,8,.18),transparent_60%)]
-            backdrop-blur-xl
-            border-l border-white/10
-            p-4 z-50 flex flex-col
-          "
+          fixed right-0 top-0 h-full w-[86%] max-w-sm z-[70]
+          bg-[linear-gradient(160deg,rgba(15,18,36,.95),rgba(15,18,36,.9))]
+          before:absolute before:inset-0
+          before:bg-[radial-gradient(60%_100%_at_50%_-10%,rgba(252,75,8,.18),transparent_60%)]
+          before:pointer-events-none              /* 👈 no bloquea taps */
+          backdrop-blur-xl
+          border-l border-white/10
+          p-4 flex flex-col
+          overflow-y-auto overscroll-contain     /* 👈 scroll interno */
+          [ -webkit-overflow-scrolling:touch ]   /* 👈 suaviza iOS (Tailwind JIT)
+        "
               aria-label="Menú móvil"
             >
               <div className="flex items-center justify-between">
@@ -347,14 +366,15 @@ const NavbarStaff = () => {
                     </p>
                   </div>
                 </div>
+
                 <button
-                  type="button"
+                  type="button" /* 👈 */
                   onClick={() => setDrawerOpen(false)}
                   className="
-                inline-flex h-10 w-10 items-center justify-center rounded-xl
-                bg-[#b61254]/10 ring-1 ring-[#b61254]/25 hover:bg-[#b61254]/20
-                focus:outline-none focus:ring-2 focus:ring-[#b61254]/50
-              "
+              inline-flex h-10 w-10 items-center justify-center rounded-xl
+              bg-[#b61254]/10 ring-1 ring-[#b61254]/25 hover:bg-[#b61254]/20
+              focus:outline-none focus:ring-2 focus:ring-[#b61254]/50
+            "
                   aria-label="Cerrar menú"
                 >
                   <FiX className="text-white text-xl" />
@@ -371,13 +391,13 @@ const NavbarStaff = () => {
                           to={`/${link.href}`}
                           onClick={() => setDrawerOpen(false)}
                           className={`
-                        block px-3 py-3 rounded-xl text-sm transition
-                        ${
-                          active
-                            ? 'bg-[#b61254]/20 text-white font-semibold ring-1 ring-[#b61254]/30'
-                            : 'text-gray-200 hover:text-white hover:bg-white/5'
-                        }
-                      `}
+                      block px-3 py-3 rounded-xl text-sm transition
+                      ${
+                        active
+                          ? 'bg-[#b61254]/20 text-white font-semibold ring-1 ring-[#b61254]/30'
+                          : 'text-gray-200 hover:text-white hover:bg-white/5'
+                      }
+                    `}
                           aria-current={active ? 'page' : undefined}
                         >
                           {link.title}
@@ -390,16 +410,17 @@ const NavbarStaff = () => {
 
               <div className="mt-auto pt-4 border-t border-white/10">
                 <button
+                  type="button" /* 👈 */
                   onClick={handleLogout}
                   className="
-                w-full inline-flex items-center justify-center gap-2
-                rounded-xl px-4 py-3
-                bg-gradient-to-r from-[#b61254] to-[#ff7a3d]
-                hover:from-[#ff6a28] hover:to-[#ff8c52]
-                text-white font-semibold
-                shadow-lg shadow-[rgba(252,75,8,.25)]
-                focus:outline-none focus:ring-2 focus:ring-[#b61254]/50
-              "
+              w-full inline-flex items-center justify-center gap-2
+              rounded-xl px-4 py-3
+              bg-gradient-to-r from-[#b61254] to-[#ff7a3d]
+              hover:from-[#ff6a28] hover:to-[#ff8c52]
+              text-white font-semibold
+              shadow-lg shadow-[rgba(252,75,8,.25)]
+              focus:outline-none focus:ring-2 focus:ring-[#b61254]/50
+            "
                 >
                   <FiLogOut className="text-white" />
                   Cerrar sesión
