@@ -17,7 +17,7 @@ import { hiddenNavbarRoutes } from './Helpers/uiConfig';
 import UsuariosGet from './Pages/MetodosGets/UsuariosGet.jsx';
 import LocalesGet from './Pages/MetodosGets/LocalesGet.jsx';
 import LogsSistema from './Pages/MetodosGets/LogsSistema.jsx';
-
+import LeadsGet from './Pages/MetodosGets/Leads/LeadsGet.jsx'
 const AdminPage = lazy(() => import('./Pages/staff/AdminPage'));
 
 export default function App() {
@@ -39,7 +39,6 @@ export default function App() {
       <Routes>
         {/* Ruta pública para Login */}
         <Route path="/login" element={<LoginForm />} />
-
         <Route
           path="/dashboard"
           element={
@@ -49,7 +48,6 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-
         <Route
           path="/dashboard/usuarios"
           element={
@@ -77,14 +75,21 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/dashboard/leads"
+          element={
+            <ProtectedRoute>
+              {' '}
+              <LeadsGet />
+            </ProtectedRoute>
+          }
+        />{' '}
         {/* Rutas protegidas */}
         {routes.map((route, index) => (
           <Route key={index} path={route.path} element={route.element} />
         ))}
-
         {/* Ruta para redirigir si se intenta acceder a la raíz sin estar logueado */}
         <Route path="/" element={!token ? <Navigate to="/login" /> : null} />
-
         {/* Ruta para 404 */}
         <Route path="*" element={<div>404 - Página no encontrada</div>} />
       </Routes>

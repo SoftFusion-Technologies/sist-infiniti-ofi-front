@@ -212,7 +212,7 @@ const NavbarStaff = () => {
           "
               title="Notificaciones"
             >
-              <FiBell className="text-[#ffd2bd]" />
+              <NotificationBell></NotificationBell>
             </button>
 
             {/* avatar + menú usuario */}
@@ -291,6 +291,8 @@ const NavbarStaff = () => {
 
           {/* botón burger móvil */}
           <div className="lg:hidden flex items-center">
+            <NotificationBell></NotificationBell>
+
             <button
               type="button"
               onClick={() => setDrawerOpen(true)}
