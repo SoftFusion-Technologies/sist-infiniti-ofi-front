@@ -17,7 +17,8 @@ import { hiddenNavbarRoutes } from './Helpers/uiConfig';
 import UsuariosGet from './Pages/MetodosGets/UsuariosGet.jsx';
 import LocalesGet from './Pages/MetodosGets/LocalesGet.jsx';
 import LogsSistema from './Pages/MetodosGets/LogsSistema.jsx';
-import LeadsGet from './Pages/MetodosGets/Leads/LeadsGet.jsx'
+import LeadsGet from './Pages/MetodosGets/Leads/LeadsGet.jsx';
+import VentasProspectosGet from './Pages/MetodosGets/VentasProspectosGet.jsx';
 const AdminPage = lazy(() => import('./Pages/staff/AdminPage'));
 
 export default function App() {
@@ -81,6 +82,15 @@ export default function App() {
             <ProtectedRoute>
               {' '}
               <LeadsGet />
+            </ProtectedRoute>
+          }
+        />{' '}
+        <Route
+          path="/dashboard/ventas"
+          element={
+            <ProtectedRoute>
+              {' '}
+              <VentasProspectosGet />
             </ProtectedRoute>
           }
         />{' '}

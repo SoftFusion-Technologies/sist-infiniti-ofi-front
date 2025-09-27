@@ -272,6 +272,9 @@ const LeadsGet = () => {
             </Link>
           </div>
 
+          <div className="mb-5 text-center pt-4 text-[#871cca] titulo text-6xl font-bold">
+            <h1>LEADS Y PROSPECTOS</h1>
+          </div>
           {/* Título y cantidad */}
           <div className="text-center mb-6">
             <h1 className="text-2xl font-semibold text-zinc-800">
