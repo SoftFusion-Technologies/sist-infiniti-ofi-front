@@ -1,23 +1,70 @@
-import React, { useState, useEffect, useRef } from 'react'; // (NUEVO)
-import axios from 'axios';
+import React, { useEffect, useRef, useState } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import Quill from 'quill';
-import 'quill/dist/quill.snow.css';
 import ModalSuccess from './ModalSuccess';
 import ModalError from './ModalError';
 import Alerta from '../Error';
 import { useAuth } from '../../AuthContext';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  FaRegTimesCircle,
+  FaRegUser,
+  FaFingerprint,
+  FaBolt,
+  FaPaperPlane
+} from 'react-icons/fa';
 
-const tiposContacto = [
-  'Socios que no asisten',
-  'Inactivo 10 dias',
-  'Inactivo 30 dias',
-  'Inactivo 60 dias',
-  'Prospectos inc. Socioplus',
-  'Prosp inc Entrenadores',
-  'Leads no convertidos'
+function getApiBase() {
+  return import.meta?.env?.VITE_API_BASE_URL || 'http://localhost:8080';
+}
+
+const tiposProspecto = [
+  { value: 'Nuevo', label: 'Nuevo' },
+  { value: 'ExSocio', label: 'ExSocio' }
 ];
+
+const canales = [
+  'Mostrador',
+  'Whatsapp',
+  'Instagram',
+  'Facebook',
+  'Pagina web',
+  'Campaña',
+  'Comentarios/Stickers'
+];
+
+const actividades = [
+  'No especifica',
+  'Musculación',
+  'Pilates',
+  'Clases grupales',
+  'Pase full'
+];
+
+const campanias = ['Instagram', 'Whatsapp', 'Facebook', 'Otro'];
+
+// ✅ Validación con Yup (incluye condicional para Campaña)
+const schema = Yup.object().shape({
+  nombre: Yup.string().trim().required('El nombre es obligatorio').max(255),
+  dni: Yup.string()
+    .trim()
+    .max(20, 'Máximo 20 caracteres')
+    .matches(/^[0-9]*$/, 'Solo números')
+    .nullable(),
+  tipo_prospecto: Yup.string()
+    .oneOf(tiposProspecto.map((t) => t.value))
+    .required('Seleccioná un tipo'),
+  canal_contacto: Yup.string().oneOf(canales).required('Seleccioná un canal'),
+  campania_origen: Yup.string().when('canal_contacto', {
+    is: 'Campaña',
+    then: (s) => s.required('Indicá el origen de la campaña')
+  }),
+  contacto: Yup.string().trim().required('El contacto es obligatorio').max(50),
+  actividad: Yup.string()
+    .oneOf(actividades)
+    .required('Seleccioná una actividad'),
+  observacion: Yup.string().max(255, 'Máximo 255 caracteres')
+});
 
 const FormAltaVentas = ({
   isOpen,
@@ -26,483 +73,457 @@ const FormAltaVentas = ({
   setSelectedRecaptacion,
   Sede
 }) => {
-  const [users, setUsers] = useState([]);
-  const [selectedSede, setSelectedSede] = useState(['monteros']);
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  const [selectAllUsers, setSelectAllUsers] = useState(false);
-
-  const { userName, userId } = useAuth();
+  const overlayRef = useRef(null);
+  const panelRef = useRef(null);
+  const { userName = '', userId } = useAuth();
 
   const [showModal, setShowModal] = useState(false);
   const [errorModal, setErrorModal] = useState(false);
-
-  // const textoModal = 'Usuario creado correctamente.'; se elimina el texto
-  // nuevo estado para gestionar dinámicamente según el método (PUT o POST)
   const [textoModal, setTextoModal] = useState('');
+  const [submitting, setSubmitting] = useState(false);
 
-  // nueva variable para administrar el contenido de formulario para saber cuando limpiarlo
-  const formikRef = useRef(null);
-
-  const nuevoRecSchema = Yup.object().shape({
-    usuario_id: Yup.number()
-      .required('El usuario es obligatorio')
-      .positive('Usuario inválido')
-      .integer('Usuario inválido'),
-    nombre: Yup.string()
-      .required('El nombre es obligatorio')
-      .max(255, 'El nombre no puede superar los 255 caracteres'),
-    tipo_contacto: Yup.string()
-      .oneOf(tiposContacto, 'Tipo de contacto inválido')
-      .required('El tipo de contacto es obligatorio')
-  });
-
-  useEffect(() => {
-    if (Rec) {
-      // Si viene con usuarios asignados, mapear los IDs
-      const ids = Rec.taskUsers?.map((tu) => tu.user.id) || [];
-      setSelectedUsers(ids);
-    } else {
-      setSelectedUsers([]);
-    }
-  }, [Rec]);
-
+  // Bloquear scroll del body cuando el modal está abierto
   useEffect(() => {
     if (isOpen) {
-      obtenerUsers(selectedSede);
+      const { overflow } = document.body.style;
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = overflow;
+      };
     }
-  }, [isOpen, selectedSede]);
+  }, [isOpen]);
 
+  // Cerrar con Esc
   useEffect(() => {
-    setSelectedUsers([]);
-    setSelectAllUsers(false);
-  }, [selectedSede]);
+    if (!isOpen) return;
+    const onKey = (e) => {
+      if (e.key === 'Escape') onClose?.();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
 
-  const obtenerUsers = async (sede) => {
+  // Cerrar al hacer click fuera
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleClickOutside = (e) => {
+      if (panelRef.current && !panelRef.current.contains(e.target)) {
+        onClose?.();
+      }
+    };
+    const overlayEl = overlayRef.current;
+    overlayEl?.addEventListener('mousedown', handleClickOutside);
+    return () =>
+      overlayEl?.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen, onClose]);
+
+  const initialValues = {
+    id: Rec?.id ?? null,
+    usuario_id: userId,
+    nombre: Rec?.nombre ?? '',
+    dni: Rec?.dni ?? '',
+    tipo_prospecto: Rec?.tipo_prospecto ?? '',
+    canal_contacto: Rec?.canal_contacto ?? '',
+    campania_origen: Rec?.campania_origen ?? '',
+    contacto: Rec?.contacto ?? '',
+    actividad: Rec?.actividad ?? '',
+    sede: Sede,
+    asesor_nombre: Rec?.asesor_nombre ?? userName ?? '',
+    n_contacto_1: Rec?.n_contacto_1 ?? 0,
+    n_contacto_2: Rec?.n_contacto_2 ?? 0,
+    n_contacto_3: Rec?.n_contacto_3 ?? 0,
+    clase_prueba_1_fecha: Rec?.clase_prueba_1_fecha ?? '',
+    clase_prueba_1_obs: Rec?.clase_prueba_1_obs ?? '',
+    clase_prueba_2_fecha: Rec?.clase_prueba_2_fecha ?? '',
+    clase_prueba_2_obs: Rec?.clase_prueba_2_obs ?? '',
+    clase_prueba_3_fecha: Rec?.clase_prueba_3_fecha ?? '',
+    clase_prueba_3_obs: Rec?.clase_prueba_3_obs ?? '',
+    convertido: Rec?.convertido ?? false,
+    observacion: Rec?.observacion ?? ''
+  };
+
+  const handleSubmitProspecto = async (values, { resetForm }) => {
     try {
-      const response =
-        sede === 'todas' || sede === ''
-          ? await axios.get('http://localhost:8080/users')
-          : await axios.get('http://localhost:8080/users', {
-              params: { sede }
-            });
+      setSubmitting(true);
 
-      // Filtrar los usuarios para excluir aquellos con level = 'instructor'
-      const usuariosFiltrados = response.data.filter(
-        (user) => user.level !== 'instructor'
-      );
-
-      setUsers(usuariosFiltrados);
-    } catch (error) {
-      console.log('Error al obtener los usuarios:', error);
-      setUsers([]);
-    }
-  };
-
-  const handleCheckboxChange = (id) => {
-    if (selectedUsers.includes(id)) {
-      setSelectedUsers([]);
-      formikRef.current.setFieldValue('usuario_id', '');
-    } else {
-      setSelectedUsers([id]);
-      formikRef.current.setFieldValue('usuario_id', id);
-    }
-  };
-
-  const handleSelectAllUsers = (values, setFieldValue) => {
-    const allSelected = values.user.length === users.length;
-    const updated = allSelected ? [] : users.map((user) => user.id);
-    setFieldValue('user', updated);
-  };
-
-  const formatSedeValue = (selectedSede) => {
-    return selectedSede.length === 3 ? 'todas' : selectedSede.join(', ');
-  };
-  const handleSubmitProspecto = async (valores) => {
-    try {
-      console.log('Valores del form:', valores);
-
-      // Armar objeto completo para el backend
-      const prospectoData = {
+      const payload = {
         usuario_id: userId,
-        nombre: valores.nombre,
-        dni: valores.dni,
-        tipo_prospecto: valores.tipo_prospecto,
-        canal_contacto: valores.canal_contacto,
-        contacto: valores.contacto,
-        actividad: valores.actividad,
+        nombre: values.nombre,
+        dni: values.dni || '',
+        tipo_prospecto: values.tipo_prospecto,
+        canal_contacto: values.canal_contacto,
+        campania_origen:
+          values.canal_contacto === 'Campaña'
+            ? values.campania_origen || ''
+            : '',
+        contacto: values.contacto,
+        actividad: values.actividad,
         sede: Sede,
-        asesor_nombre: valores.asesor_nombre,
-        n_contacto_1: valores.n_contacto_1 || 0,
-        n_contacto_2: valores.n_contacto_2 || 0,
-        n_contacto_3: valores.n_contacto_3 || 0,
-        clase_prueba_1_fecha: valores.clase_prueba_1_fecha,
-        clase_prueba_1_obs: valores.clase_prueba_1_obs,
-        clase_prueba_2_fecha: valores.clase_prueba_2_fecha,
-        clase_prueba_2_obs: valores.clase_prueba_2_obs,
-        clase_prueba_3_fecha: valores.clase_prueba_3_fecha,
-        clase_prueba_3_obs: valores.clase_prueba_3_obs,
-        convertido: valores.convertido || false,
-        observacion: valores.observacion || ''
+        asesor_nombre: values.asesor_nombre || userName || '',
+        n_contacto_1: Number(values.n_contacto_1 || 0),
+        n_contacto_2: Number(values.n_contacto_2 || 0),
+        n_contacto_3: Number(values.n_contacto_3 || 0),
+        clase_prueba_1_fecha: values.clase_prueba_1_fecha || null,
+        clase_prueba_1_obs: values.clase_prueba_1_obs || '',
+        clase_prueba_2_fecha: values.clase_prueba_2_fecha || null,
+        clase_prueba_2_obs: values.clase_prueba_2_obs || '',
+        clase_prueba_3_fecha: values.clase_prueba_3_fecha || null,
+        clase_prueba_3_obs: values.clase_prueba_3_obs || '',
+        convertido: !!values.convertido,
+        observacion: values.observacion || ''
       };
 
-      if (valores.canal_contacto === 'Campaña') {
-        prospectoData.campania_origen = valores.campania_origen || '';
-      } else {
-        // Si no es campaña, lo mandás vacío o null (opcional)
-        prospectoData.campania_origen = '';
-      }
-      const url = valores.id
-        ? `http://localhost:8080/ventas_prospectos/${valores.id}`
-        : 'http://localhost:8080/ventas_prospectos';
+      const base = getApiBase();
+      const url = values.id
+        ? `${base}/ventas_prospectos/${values.id}`
+        : `${base}/ventas_prospectos`;
+      const method = values.id ? 'PUT' : 'POST';
 
-      const method = valores.id ? 'PUT' : 'POST';
-
-      // Enviar el objeto directamente, no como array
-      const bodyData = JSON.stringify(prospectoData);
-
-      const response = await fetch(url, {
+      const res = await fetch(url, {
         method,
-        body: bodyData,
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
       });
 
-      if (!response.ok) {
-        throw new Error(`Error en la solicitud ${method}: ${response.status}`);
-      }
-
-      const result = await response.json();
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      await res.json();
 
       setTextoModal(
-        method === 'PUT'
-          ? 'Prospecto actualizado correctamente.'
-          : 'Prospecto creado correctamente.'
+        method === 'PUT' ? 'Prospecto actualizado' : 'Prospecto creado'
       );
       setShowModal(true);
       setTimeout(() => setShowModal(false), 1500);
-    } catch (error) {
-      console.error('Error al guardar prospecto:', error.message);
+
+      resetForm();
+      setSelectedRecaptacion?.(null);
+    } catch (err) {
+      console.error(err);
       setErrorModal(true);
       setTimeout(() => setErrorModal(false), 1500);
+    } finally {
+      setSubmitting(false);
     }
   };
 
-  const handleClose = () => {
-    if (formikRef.current) {
-      formikRef.current.resetForm();
-      setSelectedRecaptacion(null);
-    }
-    onClose();
-  };
-
-  const handleSedeSelection = (sede) => {
-    if (selectedSede.length === 1 && selectedSede.includes(sede)) return;
-    setSelectedSede((prev) =>
-      prev.includes(sede)
-        ? prev.filter((item) => item !== sede)
-        : [...prev, sede]
-    );
-  };
+  // ─────────────────────────────────────────────────────────────────────────────
 
   return (
-    <div
-      className={`h-screen w-screen mt-16 fixed inset-0 flex pt-10 justify-center ${
-        isOpen ? 'block' : 'hidden'
-      } bg-gray-800 bg-opacity-75 z-50`}
-    >
-      <div className={`container-inputs`}>
-        <Formik
-          innerRef={formikRef}
-          initialValues={{
-            id: Rec ? Rec.id : null,
-            usuario_id: userId,
-            nombre: Rec ? Rec.nombre : '',
-            dni: Rec ? Rec.dni : '',
-            tipo_prospecto: Rec ? Rec.tipo_prospecto : '',
-            canal_contacto: Rec ? Rec.canal_contacto : '',
-            contacto: Rec ? Rec.contacto : '',
-            actividad: Rec ? Rec.actividad : '',
-            sede: Sede,
-            asesor_nombre: Rec ? Rec.asesor_nombre : '', // nombre del asesor (opcional)
-            n_contacto_1: Rec ? Rec.n_contacto_1 : 0,
-            n_contacto_2: Rec ? Rec.n_contacto_2 : 0,
-            n_contacto_3: Rec ? Rec.n_contacto_3 : 0,
-            clase_prueba_1_fecha: Rec ? Rec.clase_prueba_1_fecha : null,
-            clase_prueba_1_obs: Rec ? Rec.clase_prueba_1_obs : '',
-            clase_prueba_2_fecha: Rec ? Rec.clase_prueba_2_fecha : null,
-            clase_prueba_2_obs: Rec ? Rec.clase_prueba_2_obs : '',
-            clase_prueba_3_fecha: Rec ? Rec.clase_prueba_3_fecha : null,
-            clase_prueba_3_obs: Rec ? Rec.clase_prueba_3_obs : '',
-            convertido: Rec ? Rec.convertido : false,
-            observacion: Rec ? Rec.observacion : ''
-          }}
-          enableReinitialize
-          onSubmit={async (values, { resetForm }) => {
-            await handleSubmitProspecto(values);
-            resetForm();
-          }}
-          validationSchema={null}
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          ref={overlayRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Formulario de alta de prospecto"
+          className="fixed inset-0 z-[999]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
         >
-          {({ errors, touched, setFieldValue, values }) => (
-            <div className="-mt-20 max-h-screen w-full max-w-xl overflow-y-auto bg-white rounded-xl p-10">
-              <Form className="formulario w-full bg-white">
-                <div className="flex justify-between">
-                  <div className="tools">
-                    <div className="circle">
-                      <span className="red toolsbox"></span>
-                    </div>
-                    <div className="circle">
-                      <span className="yellow toolsbox"></span>
-                    </div>
-                    <div className="circle">
-                      <span className="green toolsbox"></span>
-                    </div>
+          {/* Fondo futurista con glow */}
+          <div className="absolute inset-0 bg-black">
+            <div className="absolute -top-24 -left-32 h-96 w-96 rounded-full blur-3xl opacity-30 bg-[radial-gradient(circle_at_center,rgba(252,75,8,0.8),transparent_60%)]" />
+            <div className="absolute -bottom-24 -right-32 h-[28rem] w-[28rem] rounded-full blur-3xl opacity-20 bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.4),transparent_60%)]" />
+            <div className="absolute inset-0 backdrop-blur-sm bg-black/50" />
+          </div>
+
+          {/* Panel */}
+          <div className="relative z-10 flex min-h-full items-start justify-center p-4 sm:p-6">
+            <motion.div
+              ref={panelRef}
+              className="w-full max-w-[820px] relative"
+              initial={{ y: 20, scale: 0.98, opacity: 0 }}
+              animate={{ y: 0, scale: 1, opacity: 1 }}
+              exit={{ y: 10, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 120, damping: 14 }}
+            >
+              {/* Borde con gradiente */}
+              <div className="absolute -inset-[1px] rounded-2xl bg-gradient-to-r from-[#871cca] via-white/40 to-[#871cca] opacity-70 blur-[2px]" />
+
+              <div
+                className="relative rounded-2xl bg-[#0b0b10]/95 text-white shadow-[0_0_40px_rgba(252,75,8,0.15)] ring-1 ring-white/10 overflow-hidden"
+                style={{ maxHeight: 'min(92vh, 980px)' }}
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between px-5 sm:px-7 py-4 border-b border-white/10 bg-white/5">
+                  <div className="flex items-center gap-2.5">
+                    <span className="h-2.5 w-2.5 rounded-full bg-[#871cca] shadow-[0_0_10px_#871cca]" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-white/60" />
+                    <span className="h-2.5 w-2.5 rounded-full bg-white/30" />
                   </div>
-                  <div
-                    className="pr-6 pt-3 text-[20px] cursor-pointer"
-                    onClick={handleClose}
+                  <h2 className="text-lg font-semibold tracking-wide flex items-center gap-2">
+                    <FaBolt className="opacity-80" /> Nuevo prospecto
+                  </h2>
+                  <button
+                    type="button"
+                    aria-label="Cerrar"
+                    onClick={onClose}
+                    className="text-white/70 hover:text-white transition-colors text-xl leading-none p-1"
                   >
-                    x
-                  </div>
+                    <FaRegTimesCircle />
+                  </button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mx-2"></div>
+                {/* Body (scrollable) */}
+                <div className="overflow-y-auto">
+                  <Formik
+                    initialValues={initialValues}
+                    enableReinitialize
+                    validationSchema={schema}
+                    onSubmit={handleSubmitProspecto}
+                  >
+                    {({ values }) => (
+                      <Form className="p-5 sm:p-7">
+                        {/* Grid responsive */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                          {/* Nombre */}
+                          <FieldGroup
+                            label="Nombre del prospecto"
+                            name="nombre"
+                            icon={<FaRegUser />}
+                          >
+                            <Field
+                              id="nombre"
+                              name="nombre"
+                              type="text"
+                              placeholder="Ej: Juan Pérez"
+                              className={inputClass}
+                            />
+                            <Error name="nombre" />
+                          </FieldGroup>
 
-                <div className="mb-6 px-6 py-4 bg-white rounded-lg shadow-md"></div>
+                          {/* DNI */}
+                          <FieldGroup
+                            label="DNI"
+                            name="dni"
+                            icon={<FaFingerprint />}
+                          >
+                            <Field
+                              id="dni"
+                              name="dni"
+                              type="text"
+                              placeholder="Ej: 43849860"
+                              className={inputClass}
+                            />
+                            <Error name="dni" />
+                          </FieldGroup>
 
-                {/* Contenedor común (opcional si ya estás dentro de un <Form> que centraliza todo) */}
-                <div className="space-y-4 px-6">
-                  <div className="flex items-center gap-4">
-                    <label
-                      htmlFor="nombre"
-                      className="w-1/3 text-left text-black text-base font-medium whitespace-nowrap"
-                    >
-                      Nom. del prospecto
-                    </label>
-                    <div className="w-2/3">
-                      <Field
-                        id="nombre"
-                        name="nombre"
-                        type="text"
-                        className="w-full p-3 text-black bg-slate-100 rounded-xl focus:outline-orange-500"
-                        placeholder="Ingrese nombre del contacto"
-                        maxLength={100}
-                      />
-                      {errors.nombre && touched.nombre && (
-                        <div className="mt-1">
-                          <Alerta>{errors.nombre}</Alerta>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                          {/* Tipo prospecto */}
+                          <FieldGroup
+                            label="Tipo de prospecto"
+                            name="tipo_prospecto"
+                          >
+                            <Field
+                              as="select"
+                              id="tipo_prospecto"
+                              name="tipo_prospecto"
+                              className={`${inputClass} ${selectClass}`}
+                            >
+                              <option value="">Seleccione tipo</option>
+                              {tiposProspecto.map((t) => (
+                                <option key={t.value} value={t.value}>
+                                  {t.label}
+                                </option>
+                              ))}
+                            </Field>
+                            <Error name="tipo_prospecto" />
+                          </FieldGroup>
 
-                  <div className="flex items-center gap-4">
-                    <label
-                      htmlFor="dni"
-                      className="w-1/3 text-left text-black text-base font-medium whitespace-nowrap"
-                    >
-                      DNI
-                    </label>
-                    <div className="w-2/3">
-                      <Field
-                        id="dni"
-                        name="dni"
-                        type="text"
-                        className="w-full p-3 text-black bg-slate-100 rounded-xl focus:outline-orange-500"
-                        placeholder="Ingrese DNI"
-                        maxLength={20}
-                      />
-                      {errors.dni && touched.dni && (
-                        <div className="mt-1">
-                          <Alerta>{errors.dni}</Alerta>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <label
-                      htmlFor="tipo_prospecto"
-                      className="w-1/3 text-left text-black text-base font-medium whitespace-nowrap"
-                    >
-                      Tipo de prospecto
-                    </label>
-                    <div className="w-2/3">
-                      <Field
-                        as="select"
-                        id="tipo_prospecto"
-                        name="tipo_prospecto"
-                        className="w-full p-3 text-black bg-slate-100 rounded-xl focus:outline-orange-500"
-                      >
-                        <option value="">Seleccione tipo</option>
-                        <option value="Nuevo">Nuevo</option>
-                        <option value="ExSocio">ExSocio</option>
-                      </Field>
-                      {errors.tipo_prospecto && touched.tipo_prospecto && (
-                        <div className="mt-1">
-                          <Alerta>{errors.tipo_prospecto}</Alerta>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                          {/* Canal */}
+                          <FieldGroup
+                            label="Canal de contacto"
+                            name="canal_contacto"
+                          >
+                            <Field
+                              as="select"
+                              id="canal_contacto"
+                              name="canal_contacto"
+                              className={`${inputClass} ${selectClass}`}
+                            >
+                              <option value="">Seleccione canal</option>
+                              {canales.map((c) => (
+                                <option key={c} value={c}>
+                                  {c}
+                                </option>
+                              ))}
+                            </Field>
+                            <Error name="canal_contacto" />
+                          </FieldGroup>
 
-                  <div className="flex items-center gap-4">
-                    <label
-                      htmlFor="canal_contacto"
-                      className="w-1/3 text-left text-black text-base font-medium whitespace-nowrap"
-                    >
-                      Canal de contacto
-                    </label>
-                    <div className="w-2/3">
-                      <Field
-                        as="select"
-                        id="canal_contacto"
-                        name="canal_contacto"
-                        className="w-full p-3 text-black bg-slate-100 rounded-xl focus:outline-orange-500"
-                      >
-                        <option value="">Seleccione canal</option>
-                        <option value="Mostrador">Mostrador</option>
-                        <option value="Whatsapp">Whatsapp</option>
-                        <option value="Instagram">Instagram</option>
-                        <option value="Facebook">Facebook</option>
-                        <option value="Pagina web">Pagina web</option>
-                        <option value="Campaña">Campaña</option>
-                        <option value="Comentarios/Stickers">
-                          Comentarios/Stickers
-                        </option>
-                      </Field>
-                      {errors.canal_contacto && touched.canal_contacto && (
-                        <div className="mt-1">
-                          <Alerta>{errors.canal_contacto}</Alerta>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                          {/* Origen de campaña (condicional) */}
+                          {values.canal_contacto === 'Campaña' && (
+                            <FieldGroup
+                              label="Origen de la campaña"
+                              name="campania_origen"
+                              colSpan="full"
+                            >
+                              <Field
+                                as="select"
+                                id="campania_origen"
+                                name="campania_origen"
+                                className={`${inputClass} ${selectClass}`}
+                              >
+                                <option value="">Seleccione origen</option>
+                                {campanias.map((c) => (
+                                  <option key={c} value={c}>
+                                    {c}
+                                  </option>
+                                ))}
+                              </Field>
+                              <Error name="campania_origen" />
+                            </FieldGroup>
+                          )}
 
-                  {values.canal_contacto === 'Campaña' && (
-                    <div className="mt-3">
-                      <label
-                        htmlFor="campania_origen"
-                        className="text-black font-medium"
-                      >
-                        Origen de la campaña
-                      </label>
-                      <Field
-                        as="select"
-                        id="campania_origen"
-                        name="campania_origen"
-                        className="w-full p-3 text-black bg-slate-100 rounded-xl focus:outline-orange-500"
-                      >
-                        <option value="">Seleccione origen</option>
-                        <option value="Instagram">Instagram</option>
-                        <option value="Whatsapp">Whatsapp</option>
-                        <option value="Facebook">Facebook</option>
-                        <option value="Otro">Otro</option>
-                      </Field>
-                      {errors.campania_origen && touched.campania_origen && (
-                        <div className="mt-1">
-                          <Alerta>{errors.campania_origen}</Alerta>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  <div className="flex items-center gap-4">
-                    <label
-                      htmlFor="contacto"
-                      className="w-1/3 text-left text-black text-base font-medium whitespace-nowrap"
-                    >
-                      Contact usuario o tel
-                    </label>
-                    <div className="w-2/3">
-                      <Field
-                        id="contacto"
-                        name="contacto"
-                        type="text"
-                        className="w-full p-3 text-black bg-slate-100 rounded-xl focus:outline-orange-500"
-                        placeholder="Ingrese contacto"
-                        maxLength={50}
-                      />
-                      {errors.contacto && touched.contacto && (
-                        <div className="mt-1">
-                          <Alerta>{errors.contacto}</Alerta>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <label
-                      htmlFor="actividad"
-                      className="w-1/3 text-left text-black text-base font-medium whitespace-nowrap"
-                    >
-                      Actividad
-                    </label>
-                    <div className="w-2/3">
-                      <Field
-                        as="select"
-                        id="actividad"
-                        name="actividad"
-                        className="w-full p-3 text-black bg-slate-100 rounded-xl focus:outline-orange-500"
-                      >
-                        <option value="">Seleccione actividad</option>
-                        <option value="No especifica">No especifica</option>
-                        <option value="Musculacion">Musculación</option>
-                        <option value="Pilates">Pilates</option>
-                        <option value="Clases grupales">Clases grupales</option>
-                        <option value="Pase full">Pase full</option>
-                      </Field>
+                          {/* Contacto */}
+                          <FieldGroup
+                            label="Contacto (tel/usuario)"
+                            name="contacto"
+                          >
+                            <Field
+                              id="contacto"
+                              name="contacto"
+                              type="text"
+                              placeholder="Ej: 381-555-1234"
+                              className={inputClass}
+                            />
+                            <Error name="contacto" />
+                          </FieldGroup>
 
-                      {errors.actividad && touched.actividad && (
-                        <div className="mt-1">
-                          <Alerta>{errors.actividad}</Alerta>
+                          {/* Actividad */}
+                          <FieldGroup label="Actividad" name="actividad">
+                            <Field
+                              as="select"
+                              id="actividad"
+                              name="actividad"
+                              className={`${inputClass} ${selectClass}`}
+                            >
+                              <option value="">Seleccione actividad</option>
+                              {actividades.map((a) => (
+                                <option key={a} value={a}>
+                                  {a}
+                                </option>
+                              ))}
+                            </Field>
+                            <Error name="actividad" />
+                          </FieldGroup>
+
+                          {/* Observación (columna completa) */}
+                          <FieldGroup
+                            label="Observación"
+                            name="observacion"
+                            colSpan="full"
+                          >
+                            <Field
+                              as="textarea"
+                              id="observacion"
+                              name="observacion"
+                              rows={3}
+                              placeholder="Agregá un comentario"
+                              className={`${inputClass} resize-none min-h-[96px]`}
+                            />
+                            <Error name="observacion" />
+                          </FieldGroup>
                         </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <label
-                      htmlFor="contacto"
-                      className="w-1/3 text-left text-black text-base font-medium whitespace-nowrap"
-                    >
-                      Observación
-                    </label>
-                    <div className="w-2/3">
-                      <Field
-                        id="observacion"
-                        name="observacion"
-                        type="text"
-                        className="w-full p-3 text-black bg-slate-100 rounded-xl focus:outline-orange-500"
-                        placeholder="Ingrese una Observación"
-                        maxLength={50}
-                      />
-                      {errors.observacion && touched.observacion && (
-                        <div className="mt-1">
-                          <Alerta>{errors.observacion}</Alerta>
+
+                        {/* Footer sticky */}
+                        <div className="sticky bottom-0 pt-6 -mb-6">
+                          <div className="h-px w-full bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                          <button
+                            type="submit"
+                            disabled={submitting}
+                            className={`mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 font-semibold tracking-wide transition-[transform,opacity,box-shadow] focus:outline-none focus:ring-2 focus:ring-[#871cca]/60 active:scale-[0.99]
+                              ${
+                                submitting
+                                  ? 'bg-[#871cca]/60 text-white/90 shadow-[0_0_26px_rgba(252,75,8,0.25)]'
+                                  : 'bg-gradient-to-r from-[#871cca] to-[#ff7a3d] text-white shadow-[0_10px_32px_-10px_rgba(252,75,8,0.55)] hover:opacity-95'
+                              }
+                            `}
+                            title={
+                              submitting
+                                ? 'Guardando…'
+                                : Rec
+                                ? 'Actualizar'
+                                : 'Crear prospecto'
+                            }
+                          >
+                            <FaPaperPlane className="opacity-90" />
+                            {submitting
+                              ? 'Guardando…'
+                              : Rec
+                              ? 'Actualizar'
+                              : 'Crear prospecto'}
+                          </button>
                         </div>
-                      )}
-                    </div>
-                  </div>
+                      </Form>
+                    )}
+                  </Formik>
                 </div>
+              </div>
+            </motion.div>
+          </div>
 
-                <div className="sticky bottom-0 bg-white py-3 px-4">
-                  <input
-                    type="submit"
-                    value={Rec ? 'Actualizar' : 'Crear Prospecto'}
-                    className="w-full bg-orange-500 py-2 px-5 rounded-xl text-white font-bold hover:bg-[#871cca] focus:outline-orange-100"
-                  />
-                </div>
-              </Form>
-            </div>
-          )}
-        </Formik>
-      </div>
-      <ModalSuccess
-        textoModal={textoModal}
-        isVisible={showModal}
-        onClose={() => setShowModal(false)}
-      />
-      <ModalError isVisible={errorModal} onClose={() => setErrorModal(false)} />
-    </div>
+          <ModalSuccess
+            textoModal={textoModal}
+            isVisible={showModal}
+            onClose={() => setShowModal(false)}
+          />
+          <ModalError
+            isVisible={errorModal}
+            onClose={() => setErrorModal(false)}
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
+
+// ── Helpers de UI ──────────────────────────────────────────────
+
+const inputClass = [
+  'w-full rounded-xl',
+  'bg-white/[0.04] text-white placeholder-white/40',
+  'border border-white/10 focus:border-white/20',
+  'px-3.5 py-2.5',
+  'outline-none',
+  'transition',
+  'focus:ring-2 focus:ring-[#871cca]/60',
+  'shadow-[inset_0_0_0_1px_rgba(255,255,255,0.04)]'
+].join(' ');
+
+const selectClass = [
+  'bg-black text-white',
+  'hover:bg-[#111]',
+  'focus:border-white/20 focus:ring-2 focus:ring-[#fc4b08]/60'
+].join(' ');
+
+function FieldGroup({ label, name, children, colSpan, icon }) {
+  return (
+    <div className={colSpan === 'full' ? 'sm:col-span-2' : ''}>
+      <label
+        htmlFor={name}
+        className=" text-sm font-medium text-white/80 mb-2 flex items-center gap-2"
+      >
+        {icon && <span className="text-white/70">{icon}</span>}
+        <span>{label}</span>
+      </label>
+      {children}
+    </div>
+  );
+}
+
+function Error({ name }) {
+  return (
+    <ErrorMessage
+      name={name}
+      render={(msg) => (
+        <div className="mt-2">
+          <Alerta>
+            <span className="text-white">{msg}</span>
+          </Alerta>
+        </div>
+      )}
+    />
+  );
+}
 
 export default FormAltaVentas;

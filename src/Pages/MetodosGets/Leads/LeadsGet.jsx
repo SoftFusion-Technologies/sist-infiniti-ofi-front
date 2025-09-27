@@ -241,10 +241,10 @@ const LeadsGet = () => {
   };
 
   const getUserName = (userId) => {
-    // Busca en tu lista de usuarios, o usa tu propio estado global
-    const u = userList.find((u) => u.id === userId);
-    return u ? u.name : '';
+    const u = userList?.find((u) => u.id === userId);
+    return u?.nombre || '';
   };
+
   return (
     <>
       <NavbarStaff />
@@ -400,9 +400,11 @@ const LeadsGet = () => {
                               }`}
                             >
                               {personClass.movido_a_ventas
-                                ? `Movido por ${getUserName(
-                                    personClass.usuario_movido_id
-                                  )}`
+                                ? `Movido por ${
+                                    getUserName(
+                                      personClass.usuario_movido_id
+                                    ) || 'Desconocido'
+                                  }`
                                 : 'Mover a Ventas'}
                             </button>
                           </div>

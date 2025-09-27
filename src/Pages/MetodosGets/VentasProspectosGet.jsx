@@ -36,12 +36,6 @@ const getBgClass = (p) => {
 const esConvertido = (v) => v === true || v === 1 || v === '1';
 const esComision = (v) => v === true || v === 1 || v === '1';
 
-const SEDES = [
-  { value: 'monteros', label: 'Monteros' },
-  { value: 'concepcion', label: 'Concepción' },
-  { value: 'barrio sur', label: 'Barrio Sur' }
-];
-
 const normalizeSede = (sede) => {
   if (!sede) return '';
   const normalized = sede.toLowerCase().replace(/\s/g, '');
@@ -157,7 +151,6 @@ function normalizeString(str = '') {
     .replace(/[^a-z0-9]+/g, '_')
     .replace(/^_+|_+$/g, '');
 }
-
 
 function exportProspectosExcel({
   mes,
@@ -1412,7 +1405,7 @@ const VentasProspectosGet = ({ currentUser }) => {
       focus:border-purple-600 cursor-pointer
     "
                       >
-                        {SEDES.map((s) => (
+                        {sedes.map((s) => (
                           <option key={s.value} value={s.value}>
                             {s.label}
                           </option>
