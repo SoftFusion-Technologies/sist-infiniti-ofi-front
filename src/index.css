@@ -11,3 +11,23 @@ h1 {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700; /* Negrita */
 }
+
+@font-face {
+  font-family: "BigNoodle";
+  src: url('./font/big_noodle_titling.ttf') format('truetype'); 
+}
+
+@font-face {
+  font-family: "MessinaRegular";
+  src: url('./font/MessinaSans-Regular.ttf') format('truetype'); 
+}
+
+.font-bignoodle {
+  font-family: BigNoodle
+}
+
+.font-messina {
+  font-family: MessinaRegular;
+}
+
+
