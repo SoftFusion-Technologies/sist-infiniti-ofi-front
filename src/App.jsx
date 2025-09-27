@@ -16,6 +16,7 @@ import LoginForm from './components/login/LoginForm.jsx';
 import { hiddenNavbarRoutes } from './Helpers/uiConfig';
 import UsuariosGet from './Pages/MetodosGets/UsuariosGet.jsx';
 import LocalesGet from './Pages/MetodosGets/LocalesGet.jsx';
+import LogsSistema from './Pages/MetodosGets/LogsSistema.jsx';
 
 const AdminPage = lazy(() => import('./Pages/staff/AdminPage'));
 
@@ -64,6 +65,15 @@ export default function App() {
             <ProtectedRoute>
               {' '}
               <LocalesGet />{' '}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/logs"
+          element={
+            <ProtectedRoute>
+              {' '}
+              <LogsSistema />{' '}
             </ProtectedRoute>
           }
         />
