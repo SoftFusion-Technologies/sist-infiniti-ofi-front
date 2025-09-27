@@ -237,7 +237,7 @@ const NotificationBell = () => {
                   }`}
                 >
                   <div className="flex flex-col">
-                    <strong className="text-lg text-gray-900">{n.title}</strong>
+                    <strong className="text-lg text-gray-900 uppercase">{n.title}</strong>
                     <div className="mt-1 text-gray-800 text-sm">
                       {n.message}
                     </div>

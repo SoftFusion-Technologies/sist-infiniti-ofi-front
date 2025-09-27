@@ -9,6 +9,8 @@ import { motion } from 'framer-motion';
 import CardRecaptacion from './Components/CardRecaptacion';
 import BadgeAgendaVentas from './Components/BadgeAgendaVentas';
 import ParticlesBackground from '../../components/ParticlesBackground.jsx';
+import BadgeTestClasses from '../MetodosGets/Leads/BadgeTestClasses.jsx';
+
 const AdminPage = () => {
   const { userId, userLevel, userName } = useAuth();
 
@@ -53,9 +55,19 @@ const AdminPage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="bg-white font-bignoodle w-[250px] h-[100px] text-[20px] lg:w-[400px] lg:h-[150px] lg:text-[30px] mx-auto flex justify-center items-center rounded-tr-xl rounded-bl-xl"
+              className="relative overflow-visible bg-white font-bignoodle
+             w-[250px] h-[100px] text-[20px]
+             lg:w-[400px] lg:h-[150px] lg:text-[30px]
+             mx-auto flex justify-center items-center
+             rounded-tr-xl rounded-bl-xl"
             >
-              {' '}
+              {/* 🔴 Badge de Test Classes (pendientes) */}
+              <BadgeTestClasses
+                userId={userId}
+                userLevel={userLevel}
+                size="lg"
+              />
+
               <Link to="/dashboard/leads">
                 <button className="btnstaff">Leads y Prospectos</button>
               </Link>
