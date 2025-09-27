@@ -18,6 +18,10 @@ import * as XLSX from 'xlsx';
 import Swal from 'sweetalert2';
 import FilterToolbar from './Components/FilterToolbar';
 
+function getApiBase() {
+  return 'http://localhost:8080';
+}
+
 const getBgClass = (p) => {
   const esComision =
     p.comision === true || p.comision === 1 || p.comision === '1';
@@ -50,24 +54,47 @@ function aplicarFiltros({
   selectedSede,
   tipoFiltro,
   canalFiltro,
-  actividadFiltro
+  actividadFiltro,
+  localesActivas = [],
+  usuariosById = {} // opcional: mapa { [usuario_id]: { local_id } } si ya lo tenés
 }) {
   if (!prospectos?.length) return [];
 
   const q = (search || '').toLowerCase();
+  const sedeElegida =
+    selectedSede ??
+    (Array.isArray(localesActivas) && localesActivas.length === 1
+      ? normalizeString(
+          localesActivas[0].codigo ||
+            localesActivas[0].key ||
+            localesActivas[0].nombre ||
+            ''
+        )
+      : null);
 
-  const filtepurple = prospectos.filter((p) => {
-    // 1) búsqueda por nombre (podés sumar DNI / contacto si querés)
-    const nombreMatch = (p.nombre || '').toLowerCase().includes(q);
-    if (!nombreMatch) return false;
+  // Prepara índices rápidos de locales activas
+  const idxLocales = buildLocalesIndex(localesActivas);
 
-    // 2) sede
-    if (selectedSede) {
-      const sedeProspecto = normalizeSede(p.sede);
-      if (sedeProspecto !== selectedSede) return false;
+  const filtrados = prospectos.filter((p) => {
+    // 1) búsqueda
+    if (
+      !String(p.nombre || '')
+        .toLowerCase()
+        .includes(q)
+    )
+      return false;
+
+    // 2) sede (derivada)
+    if (sedeElegida) {
+      const sedeProspectoKey = deriveProspectSedeKey(
+        p,
+        idxLocales,
+        usuariosById
+      );
+      if (sedeProspectoKey !== sedeElegida) return false;
     }
 
-    // 3) filtros select
+    // 3) selects
     if (tipoFiltro && p.tipo_prospecto !== tipoFiltro) return false;
     if (canalFiltro && p.canal_contacto !== canalFiltro) return false;
     if (actividadFiltro && p.actividad !== actividadFiltro) return false;
@@ -75,15 +102,62 @@ function aplicarFiltros({
     return true;
   });
 
-  // Ordenar como en la UI (convertido primero false->true, luego id desc)
-  const sorted = filtepurple.sort((a, b) => {
+  // orden
+  return filtrados.sort((a, b) => {
     if (!a.convertido && b.convertido) return -1;
     if (a.convertido && !b.convertido) return 1;
-    return b.id - a.id;
+    return (b.id ?? 0) - (a.id ?? 0);
   });
-
-  return sorted;
 }
+
+function buildLocalesIndex(localesActivas) {
+  const byId = new Map();
+  const byCodigo = new Map();
+  const byNombre = new Map();
+
+  for (const loc of localesActivas || []) {
+    const key = normalizeString(loc.codigo || loc.key || loc.nombre || '');
+    if (loc.id) byId.set(Number(loc.id), key);
+    if (loc.codigo) byCodigo.set(normalizeString(loc.codigo), key);
+    if (loc.nombre) byNombre.set(normalizeString(loc.nombre), key);
+  }
+  return { byId, byCodigo, byNombre };
+}
+
+function deriveProspectSedeKey(p, idx, usuariosById) {
+  // 1) si el prospecto tiene local_id directo
+  if (p.local_id && idx.byId.has(Number(p.local_id))) {
+    return idx.byId.get(Number(p.local_id));
+  }
+
+  // 2) si viene con usuario_id, tomamos su local_id
+  if (p.usuario_id) {
+    const user = usuariosById[p.usuario_id];
+    if (user?.local_id && idx.byId.has(Number(user.local_id))) {
+      return idx.byId.get(Number(user.local_id));
+    }
+  }
+
+  // 3) si por legado viene con string sede/sede_codigo/sede_nombre
+  const raw = normalizeString(p.sede || p.sede_codigo || p.sede_nombre || '');
+  if (raw) {
+    if (idx.byCodigo.has(raw)) return idx.byCodigo.get(raw);
+    if (idx.byNombre.has(raw)) return idx.byNombre.get(raw);
+  }
+
+  // 4) no se pudo derivar → no matchea ninguna sede activa
+  return null;
+}
+
+function normalizeString(str = '') {
+  return String(str)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+}
+
 
 function exportProspectosExcel({
   mes,
@@ -233,6 +307,8 @@ const VentasProspectosGet = ({ currentUser }) => {
   const [comisionFiltro, setComisionFiltro] = useState('');
   // '' | 'con' | 'sin'
 
+  const [sedes, setSedes] = useState([]);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     const obs = {};
     prospectos.forEach((p) => {
@@ -300,11 +376,37 @@ const VentasProspectosGet = ({ currentUser }) => {
     return normalized === 'smt' ? 'barrio sur' : normalized;
   };
 
-  const sedes = [
-    { key: 'monteros', label: 'Monteros' },
-    { key: 'concepcion', label: 'Concepción' },
-    { key: 'smt', label: 'SMT / Barrio Sur' }
-  ];
+  useEffect(() => {
+    let cancel = false;
+    (async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('http://localhost:8080/locales/activas', {
+          cache: 'no-store'
+        });
+        const data = await res.json();
+        if (!cancel) {
+          setSedes(Array.isArray(data) ? data : []);
+          // preseleccionar si hay una sola activa
+          if (Array.isArray(data) && data.length === 1) {
+            const only = data[0];
+            setSelectedSede(
+              normalizeString(only.codigo || only.key || only.nombre || '')
+            );
+            setPage(1);
+          }
+        }
+      } catch (e) {
+        console.error(e);
+        if (!cancel) setSedes([]);
+      } finally {
+        if (!cancel) setLoading(false); // <- MUY IMPORTANTE
+      }
+    })();
+    return () => {
+      cancel = true;
+    };
+  }, []);
 
   const URL = 'http://localhost:8080/ventas_prospectos';
   useEffect(() => {
@@ -1025,6 +1127,10 @@ const VentasProspectosGet = ({ currentUser }) => {
               className="flex gap-2 md:gap-4 flex-wrap md:flex-nowrap overflow-x-auto scrollbar-hide py-2"
               style={{ WebkitOverflowScrolling: 'touch', maxWidth: '100vw' }}
             >
+              {loading && (
+                <span className="text-sm opacity-70 px-2">Cargando sedes…</span>
+              )}
+
               {sedes.map(({ key, label }) => {
                 const normalizedKey = normalizeString(key);
                 const isSelected = selectedSede === normalizedKey;
@@ -1033,19 +1139,15 @@ const VentasProspectosGet = ({ currentUser }) => {
                   <button
                     key={key}
                     className={`
-        flex-shrink-0
-        px-6 py-2
-        rounded-full
-        font-bold
-        text-sm md:text-base
-        focus:outline-none focus:ring-2 focus:ring-green-500
-        transition-all duration-150
-        ${
-          isSelected
-            ? 'bg-green-800 text-white shadow-md scale-105 border border-green-900'
-            : 'bg-green-600 text-white hover:bg-green-700 border border-green-700'
-        }
-      `}
+              flex-shrink-0 px-6 py-2 rounded-full font-bold text-sm md:text-base
+              focus:outline-none focus:ring-2 focus:ring-green-500
+              transition-all duration-150
+              ${
+                isSelected
+                  ? 'bg-green-800 text-white shadow-md scale-105 border border-green-900'
+                  : 'bg-green-600 text-white hover:bg-green-700 border border-green-700'
+              }
+            `}
                     style={{
                       minWidth: 120,
                       marginBottom: 4,
@@ -1053,9 +1155,7 @@ const VentasProspectosGet = ({ currentUser }) => {
                       letterSpacing: '.02em'
                     }}
                     onClick={() => {
-                      setSelectedSede(
-                        selectedSede === normalizedKey ? null : normalizedKey
-                      );
+                      setSelectedSede(isSelected ? null : normalizedKey);
                       setPage(1);
                     }}
                   >
@@ -1737,7 +1837,6 @@ const VentasProspectosGet = ({ currentUser }) => {
         prospecto={prospectos.find((p) => p.id === claseSeleccionada?.id)}
         tipoSeleccionado={tipoSeleccionado}
       />
-
 
       <FormAltaVentas
         isOpen={modalNew}
