@@ -18,20 +18,46 @@ const NotificationBell = () => {
   const URL = 'http://localhost:8080/';
 
   useEffect(() => {
-    const getUserIdByEmail = async () => {
+    const getUserId = async () => {
       try {
-        const response = await fetch(`${URL}users/`);
-        if (!response.ok) {
-          throw new Error(
-            `Error al obtener los usuarios: ${response.statusText}`
-          );
-        }
-        const users = await response.json();
-        const user = users.find((u) => u.email === userName);
+        const res = await fetch(`${URL}users/`);
+        if (!res.ok)
+          throw new Error(`Error al obtener los usuarios: ${res.statusText}`);
+        const users = await res.json();
+
+        const login = String(userName || '').trim();
+
+        // normalizadores
+        const norm = (s) =>
+          String(s || '')
+            .trim()
+            .toLowerCase();
+        const localPart = (email) =>
+          String(email || '')
+            .split('@')[0]
+            ?.toLowerCase();
+
+        // intenta por email exacto, por nombre, y por parte local del email
+        const user =
+          users.find((u) => norm(u.email) === norm(login)) ||
+          users.find((u) => norm(u.nombre) === norm(login)) ||
+          users.find((u) => localPart(u.email) === norm(login));
+
         if (user) {
           setUserId(user.id);
         } else {
-          console.log(`Usuario con email ${userName} no encontrado`);
+          // fallback opcional: elegí el primer admin
+          const fallbackAdmin = users.find((u) => norm(u.rol) === 'admin');
+          if (fallbackAdmin) {
+            console.warn(
+              `No se encontró ${login}. Usando admin id=${fallbackAdmin.id} como fallback.`
+            );
+            setUserId(fallbackAdmin.id);
+          } else {
+            console.log(
+              `Usuario "${login}" no encontrado y no hay admin de fallback.`
+            );
+          }
         }
       } catch (err) {
         setError(err.message);
@@ -39,23 +65,24 @@ const NotificationBell = () => {
         setLoading(false);
       }
     };
-    getUserIdByEmail();
+    getUserId();
   }, [userName]);
 
   const fetchNotifications = async () => {
     try {
-      // 1. Notificaciones "manuales"
-      const response = await fetch(`${URL}notifications/${userId}`);
-      const data = await response.json();
+      if (!userId) return;
 
-      // 2. Notificaciones automáticas de clase de prueba (HOY)
+      // 1) Lista por usuario (ajusta la ruta si cambiaste a /notifications/user/:userId)
+      const res = await fetch(`${URL}notifications/${userId}`);
+      const data = await res.json();
+
+      // 2) Clases de prueba hoy
       const resClases = await fetch(
         `${URL}notifications/clases-prueba/${userId}`
       );
       const clasesPrueba = await resClases.json();
 
-      // Normalizá formato para mostrar juntos:
-      const clasesPruebaNotis = clasesPrueba.map((p) => ({
+      const clasesPruebaNotis = (clasesPrueba || []).map((p) => ({
         id: `clase-prueba-${p.prospecto_id}`,
         title: 'Clase de prueba agendada HOY',
         message: `Clase para ${p.nombre} (${p.contacto})`,
@@ -63,36 +90,35 @@ const NotificationBell = () => {
           p.clase_prueba_1_fecha ||
           p.clase_prueba_2_fecha ||
           p.clase_prueba_3_fecha,
-        leido: 0, // Siempre 0 porque son "del día", no se pueden marcar como leídas
+        leido: 0,
         reference_id: p.prospecto_id,
         type: 'clase_prueba'
       }));
 
-      // Filtros de las notificaciones manuales como hacías antes
-      const filteredData = data.filter((n) => {
-        if (
-          n.title === 'Nueva queja registrada' ||
-          n.title === 'Nueva pregunta frecuente registrada'
-        ) {
-          return true;
-        }
-        if (
-          n.title === 'Nueva clase de prueba registrada' ||
-          n.title === 'Nueva novedad registrada'
-        ) {
-          return userLevel !== 'instructor';
-        }
-        return false;
+      const ALLOWED_TITLES = new Set([
+        'Nueva queja registrada',
+        'Nueva pregunta frecuente registrada',
+        'Nueva clase de prueba registrada'
+        // 'Nueva novedad registrada',
+      ]);
+
+      const filteredData = (data || [])
+        .map((n) => ({ ...n, leido: n.leido ?? 0 }))
+        .filter((n) => ALLOWED_TITLES.has(n.title));
+
+      const allNotis = [...clasesPruebaNotis, ...filteredData];
+      const unread = allNotis.filter((n) => n.leido === 0);
+
+      console.log('[notis] usuario', userId, {
+        totalBackend: (data || []).length,
+        totalClases: (clasesPrueba || []).length,
+        totalAll: allNotis.length,
+        unread: unread.length,
+        sample: allNotis[0]
       });
 
-      // Uní ambas listas (las automáticas siempre van al principio)
-      const allNotis = [...clasesPruebaNotis, ...filteredData];
-
-      // Calculá no leídas
-      const unreadNotifications = allNotis.filter((n) => n.leido === 0);
-
       setNotifications(allNotis);
-      setNewNotificationCount(unreadNotifications.length);
+      setNewNotificationCount(unread.length);
     } catch (error) {
       console.error('Error al obtener las notificaciones:', error);
     }
@@ -138,22 +164,48 @@ const NotificationBell = () => {
   };
 
   const handleRedirect = (notification) => {
-    if (notification.title === 'Nueva queja registrada') {
-      navigate(`/dashboard/quejas/${notification.reference_id}`);
-    } else if (notification.title === 'Nueva novedad registrada') {
-      navigate(`/dashboard/novedades/${notification.reference_id}`);
-    } else if (
-      notification.title === 'Nueva clase de prueba registrada' ||
-      notification.type === 'clase_prueba' ||
-      notification.title === 'Clase de prueba agendada HOY'
-    ) {
-      // Redirigí y pasá el prospecto_id como parámetro de estado
-      navigate('/dashboard/ventas', {
-        state: { prospectoId: notification.reference_id }
-      });
-    } else if (notification.title === 'Nueva pregunta frecuente registrada') {
-      navigate(`/dashboard/ask/${notification.reference_id}`);
+    const title = String(notification?.title || '')
+      .toLowerCase()
+      .trim();
+    const module = String(notification?.module || '')
+      .toLowerCase()
+      .trim();
+    const refId = notification?.reference_id;
+
+    if (!refId) return; // sin id no redirigimos
+
+    // Helpers
+    const is = (t) => title === t;
+
+    if (is('nueva queja registrada')) {
+      navigate(`/dashboard/quejas/${refId}`);
+      return;
     }
+
+    if (is('nueva novedad registrada')) {
+      navigate(`/dashboard/novedades/${refId}`);
+      return;
+    }
+
+    // 🔸 Clase de prueba → LEADS
+    if (
+      is('nueva clase de prueba registrada') ||
+      is('clase de prueba agendada hoy') ||
+      notification?.type === 'clase_prueba' ||
+      module === 'clases_de_prueba'
+    ) {
+      // Pasá el id por estado (o por query si preferís)
+      navigate('/dashboard/leads', { state: { prospectoId: refId } });
+      return;
+    }
+
+    if (is('nueva pregunta frecuente registrada')) {
+      navigate(`/dashboard/ask/${refId}`);
+      return;
+    }
+
+    // Fallback: si el módulo viniera mapeado, podés rutear por módulo
+    // if (module === 'algo') navigate('/dashboard/lo-que-sea');
   };
 
   return (

@@ -1,59 +1,145 @@
-import React from "react";
-import { useFormik } from "formik";
-import * as Yup from "yup";
-import { motion } from "framer-motion";
-import { FaWhatsapp, FaDumbbell, FaUser, FaIdCard, FaPhone } from "react-icons/fa";
-import { CgGym } from "react-icons/cg";
-import ParticlesBackground from "../../components/ParticlesBackground";
+import React from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { motion } from 'framer-motion';
+import {
+  FaWhatsapp,
+  FaDumbbell,
+  FaUser,
+  FaIdCard,
+  FaPhone
+} from 'react-icons/fa';
+import { CgGym } from 'react-icons/cg';
+import ParticlesBackground from '../../components/ParticlesBackground';
+import Swal from 'sweetalert2';
 
 const ClasePrueba = () => {
   // Define el esquema de validación con Yup
   const validationSchema = Yup.object({
     nombre: Yup.string()
-      .min(3, "Debe tener al menos 3 caracteres")
-      .required("El nombre es obligatorio"),
+      .min(3, 'Debe tener al menos 3 caracteres')
+      .required('El nombre es obligatorio'),
     apellido: Yup.string()
-      .min(3, "Debe tener al menos 3 caracteres")
-      .required("El apellido es obligatorio"),
+      .min(3, 'Debe tener al menos 3 caracteres')
+      .required('El apellido es obligatorio'),
     dni: Yup.string()
-      .matches(/^[0-9]+$/, "El DNI solo debe contener números")
-      .min(7, "El DNI debe tener entre 7 y 8 dígitos")
-      .max(8, "El DNI debe tener entre 7 y 8 dígitos")
-      .required("El DNI es obligatorio"),
+      .matches(/^[0-9]+$/, 'El DNI solo debe contener números')
+      .min(7, 'El DNI debe tener entre 7 y 8 dígitos')
+      .max(8, 'El DNI debe tener entre 7 y 8 dígitos')
+      .required('El DNI es obligatorio'),
     telefono: Yup.string()
-      .matches(/^[0-9]+$/, "El teléfono solo debe contener números")
-      .min(10, "Debe tener al menos 10 dígitos")
-      .required("El número de teléfono es obligatorio"),
+      .matches(/^[0-9]+$/, 'El teléfono solo debe contener números')
+      .min(10, 'Debe tener al menos 10 dígitos')
+      .required('El número de teléfono es obligatorio'),
     objetivos: Yup.string()
       .oneOf(
         [
-          "perder_peso",
-          "ganar_musculo",
-          "mejorar_resistencia",
-          "salud_general",
+          'perder_peso',
+          'ganar_musculo',
+          'mejorar_resistencia',
+          'salud_general'
         ],
-        "Selecciona un objetivo válido"
+        'Selecciona un objetivo válido'
       )
-      .required("Debes seleccionar un objetivo"),
+      .required('Debes seleccionar un objetivo')
   });
 
-  // Configura Formik
+  // useFormik (actualizado)
   const formik = useFormik({
     initialValues: {
-      nombre: "",
-      apellido: "",
-      dni: "",
-      telefono: "",
-      objetivos: "",
+      nombre: '',
+      apellido: '',
+      dni: '',
+      telefono: '',
+      objetivos: '',
+      sede: 'Infinity Gym SMT'
     },
-    validationSchema: validationSchema,
-    onSubmit: (values, { resetForm }) => {
-      console.log("Datos del formulario:", values);
-      alert(
-        "¡Gracias! Hemos recibido tu solicitud para una clase de prueba. Nos pondremos en contacto contigo pronto."
-      );
-      resetForm();
-    },
+    validationSchema,
+    onSubmit: async (values, { resetForm, setSubmitting }) => {
+      const payload = {
+        name: values.nombre,
+        last_name: values.apellido,
+        dni: values.dni,
+        celular: values.telefono,
+        sede: values.sede,
+        objetivo: values.objetivos,
+        user: null,
+        observaciones: null,
+        state: 'nuevo',
+        movido_a_ventas: 0,
+        usuario_movido_id: null,
+        fecha_movido: null
+      };
+
+      try {
+        setSubmitting(true);
+
+        // Loader mientras se hace el POST
+        Swal.fire({
+          title: 'Enviando...',
+          html: 'Estamos registrando tu solicitud',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+          showConfirmButton: false,
+          background: 'rgba(15,18,36,0.95)',
+          color: '#e5e7eb',
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        const res = await fetch('http://localhost:8080/testclass', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        let data = null;
+        try {
+          data = await res.json();
+        } catch {}
+
+        if (!res.ok) {
+          const msg = data?.message || 'Error creando la clase de prueba';
+          throw new Error(msg);
+        }
+
+        // Éxito
+        await Swal.fire({
+          icon: 'success',
+          title: '¡Listo!',
+          text: 'Recibimos tu solicitud. Te contactamos pronto.',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#fc4b08',
+          background: 'rgba(15,18,36,0.95)',
+          color: '#e5e7eb'
+        });
+
+        resetForm({
+          values: {
+            nombre: '',
+            apellido: '',
+            dni: '',
+            telefono: '',
+            objetivos: '',
+            sede: 'Infinity Gym SMT'
+          }
+        });
+      } catch (e) {
+        console.error(e);
+        await Swal.fire({
+          icon: 'error',
+          title: 'No pudimos registrar tu solicitud',
+          text: e.message || 'Intenta de nuevo en unos minutos.',
+          confirmButtonText: 'Entendido',
+          confirmButtonColor: '#fc4b08',
+          background: 'rgba(15,18,36,0.95)',
+          color: '#e5e7eb'
+        });
+      } finally {
+        setSubmitting(false);
+      }
+    }
   });
 
   const renderError = (field) =>
@@ -64,23 +150,36 @@ const ClasePrueba = () => {
 
   // Objeto para definir los campos del formulario
   const formFields = [
-    { name: "nombre", label: "Nombre", type: "text", icon: FaUser },
-    { name: "apellido", label: "Apellido", type: "text", icon: FaUser },
-    { name: "dni", label: "DNI", type: "text", icon: FaIdCard },
-    { name: "telefono", label: "Número de Teléfono", type: "tel", icon: FaPhone },
+    { name: 'nombre', label: 'Nombre', type: 'text', icon: FaUser },
+    { name: 'apellido', label: 'Apellido', type: 'text', icon: FaUser },
+    { name: 'dni', label: 'DNI', type: 'text', icon: FaIdCard },
     {
-      name: "objetivos",
-      label: "¿Cuál es tu principal objetivo?",
-      type: "select",
+      name: 'telefono',
+      label: 'Número de Teléfono',
+      type: 'tel',
+      icon: FaPhone
+    },
+
+    {
+      name: 'sede',
+      label: 'Sede',
+      type: 'select',
+      icon: CgGym,
+      options: [{ value: 'Infinity Gym SMT', label: 'Infinity Gym SMT' }]
+    },
+    {
+      name: 'objetivos',
+      label: '¿Cuál es tu principal objetivo?',
+      type: 'select',
       icon: CgGym,
       options: [
-        { value: "", label: "Selecciona una opción" },
-        { value: "perder_peso", label: "Perder peso" },
-        { value: "ganar_musculo", label: "Ganar masa muscular" },
-        { value: "mejorar_resistencia", label: "Mejorar resistencia" },
-        { value: "salud_general", label: "Salud y bienestar general" },
-      ],
-    },
+        { value: '', label: 'Selecciona una opción' },
+        { value: 'perder_peso', label: 'Perder peso' },
+        { value: 'ganar_musculo', label: 'Ganar masa muscular' },
+        { value: 'mejorar_resistencia', label: 'Mejorar resistencia' },
+        { value: 'salud_general', label: 'Salud y bienestar general' }
+      ]
+    }
   ];
 
   // Animaciones
@@ -91,9 +190,9 @@ const ClasePrueba = () => {
       y: 0,
       transition: {
         duration: 0.6,
-        staggerChildren: 0.1,
-      },
-    },
+        staggerChildren: 0.1
+      }
+    }
   };
 
   const itemVariants = {
@@ -101,8 +200,8 @@ const ClasePrueba = () => {
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.5 },
-    },
+      transition: { duration: 0.5 }
+    }
   };
 
   return (
@@ -144,7 +243,7 @@ const ClasePrueba = () => {
               aria-hidden
               className="pointer-events-none absolute -top-20 -left-20 size-[28rem] rounded-full blur-2xl opacity-60 bg-[conic-gradient(from_180deg_at_50%_50%,rgba(59,130,246,0.12),rgba(6,182,212,0.10),rgba(99,102,241,0.10),transparent,rgba(6,182,212,0.10))]"
             />
-            
+
             {/* Ribete metálico */}
             <span
               aria-hidden
@@ -154,10 +253,7 @@ const ClasePrueba = () => {
 
             <div className="relative z-10 p-8">
               {/* Encabezado */}
-              <motion.div 
-                variants={itemVariants} 
-                className="text-center mb-8"
-              >
+              <motion.div variants={itemVariants} className="text-center mb-8">
                 <div className="flex items-center justify-center gap-3 mb-4">
                   <FaDumbbell className="text-3xl text-gray-300" />
                   <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">
@@ -168,14 +264,15 @@ const ClasePrueba = () => {
                   </h1>
                 </div>
                 <p className="text-gray-300 text-lg">
-                  Completa el formulario y da el primer paso hacia tu mejor versión.
+                  Completa el formulario y da el primer paso hacia tu mejor
+                  versión.
                 </p>
               </motion.div>
 
               {/* Formulario */}
               <form onSubmit={formik.handleSubmit} className="space-y-6">
                 {formFields.map((field, index) => (
-                  <motion.div 
+                  <motion.div
                     key={field.name}
                     variants={itemVariants}
                     transition={{ delay: index * 0.1 }}
@@ -187,8 +284,8 @@ const ClasePrueba = () => {
                       <field.icon className="text-gray-400" />
                       {field.label}
                     </label>
-                    
-                    {field.type === "select" ? (
+
+                    {field.type === 'select' ? (
                       <select
                         id={field.name}
                         name={field.name}
@@ -198,7 +295,11 @@ const ClasePrueba = () => {
                         className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300/30 focus:border-transparent transition-all backdrop-blur-sm"
                       >
                         {field.options.map((option) => (
-                          <option key={option.value} value={option.value} className="bg-gray-900 text-white">
+                          <option
+                            key={option.value}
+                            value={option.value}
+                            className="bg-gray-900 text-white"
+                          >
                             {option.label}
                           </option>
                         ))}
@@ -236,7 +337,10 @@ const ClasePrueba = () => {
               </form>
 
               {/* Sección de WhatsApp */}
-              <motion.div variants={itemVariants} className="text-center mt-8 pt-6 border-t border-white/10">
+              <motion.div
+                variants={itemVariants}
+                className="text-center mt-8 pt-6 border-t border-white/10"
+              >
                 <p className="text-gray-400 text-sm mb-4">
                   ¿Prefieres contactarnos directamente?
                 </p>
