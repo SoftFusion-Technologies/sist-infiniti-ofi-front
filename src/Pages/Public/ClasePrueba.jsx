@@ -110,7 +110,7 @@ const ClasePrueba = () => {
           title: '¡Listo!',
           text: 'Recibimos tu solicitud. Te contactamos pronto.',
           confirmButtonText: 'Entendido',
-          confirmButtonColor: '#fc4b08',
+          confirmButtonColor: '#871cca',
           background: 'rgba(15,18,36,0.95)',
           color: '#e5e7eb'
         });
@@ -132,7 +132,7 @@ const ClasePrueba = () => {
           title: 'No pudimos registrar tu solicitud',
           text: e.message || 'Intenta de nuevo en unos minutos.',
           confirmButtonText: 'Entendido',
-          confirmButtonColor: '#fc4b08',
+          confirmButtonColor: '#871cca',
           background: 'rgba(15,18,36,0.95)',
           color: '#e5e7eb'
         });

@@ -464,9 +464,9 @@ const LocalesGet = () => {
                           aria-label={`Ver ${local?.nombre ?? 'local'}`}
                           className="
       inline-flex items-center justify-center h-10 px-3 rounded-xl
-      bg-[#fc4b08]/10 ring-1 ring-[#fc4b08]/25 text-[#ffb28e]
-      hover:bg-[#fc4b08]/20 hover:ring-[#fc4b08]/40 hover:text-white
-      focus:outline-none focus:ring-2 focus:ring-[#fc4b08]/50
+      bg-[#871cca]/10 ring-1 ring-[#871cca]/25 text-[#ffb28e]
+      hover:bg-[#871cca]/20 hover:ring-[#871cca]/40 hover:text-white
+      focus:outline-none focus:ring-2 focus:ring-[#871cca]/50
       transition
     "
                         >
@@ -836,7 +836,7 @@ const LocalesGet = () => {
                     className="inline-flex items-center justify-center h-10 px-4 rounded-xl
                  bg-white/5 ring-1 ring-white/10 text-gray-200
                  hover:bg-white/10 focus:outline-none focus:ring-2
-                 focus:ring-[#fc4b08]/50 transition"
+                 focus:ring-[#871cca]/50 transition"
                   >
                     Cerrar
                   </button>
@@ -850,11 +850,11 @@ const LocalesGet = () => {
                       ); /* asegúrate que openModal exista */
                     }}
                     className="inline-flex items-center justify-center h-10 px-4 rounded-xl
-                 bg-gradient-to-r from-[#fc4b08] to-[#ff7a3d]
+                 bg-gradient-to-r from-[#871cca] to-[#ff7a3d]
                  hover:from-[#ff6a28] hover:to-[#ff8c52]
                  text-white font-semibold
                  shadow-lg shadow-[rgba(252,75,8,.25)]
-                 focus:outline-none focus:ring-2 focus:ring-[#fc4b08]/50
+                 focus:outline-none focus:ring-2 focus:ring-[#871cca]/50
                  transition"
                   >
                     Editar
