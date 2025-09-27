@@ -12,6 +12,24 @@ h1 {
   font-weight: 700; /* Negrita */
 }
 
+:root {
+  --font-family-base: 'Montserrat', sans-serif;
+  --font-weight-regular: 400;
+  --font-weight-black-italic: 900;
+}
+
+.titulo {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-black-italic);
+  font-style: italic;
+}
+
+.cuerpo {
+  font-family: var(--font-family-base);
+  font-weight: var(--font-weight-regular);
+}
+
+
 @font-face {
   font-family: "BigNoodle";
   src: url('./font/big_noodle_titling.ttf') format('truetype'); 
@@ -30,4 +48,8 @@ h1 {
   font-family: MessinaRegular;
 }
 
-
+@keyframes ray {
+  0%   { transform: translateX(-40%) skewX(-12deg); opacity: 0; }
+  15%  { opacity: .9; }
+  100% { transform: translateX(40%)  skewX(-12deg); opacity: 0; }
+}

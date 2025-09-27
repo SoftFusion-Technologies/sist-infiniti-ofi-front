@@ -1,5 +1,5 @@
 import { Routes, Route, Link, Navigate } from 'react-router-dom';
-import {lazy} from 'react'
+import { lazy } from 'react';
 import Navbar from './Layout/Navbar.jsx';
 import routes from './Routes/Rutas.jsx';
 import Login from './Pages/Admin/Login.jsx';
@@ -14,19 +14,23 @@ import LoginForm from './components/login/LoginForm.jsx';
 // cambio agregado por Benjamin Orellana
 // aqui dentro ponemos las rutas en las que no queremos mostrar el nav
 import { hiddenNavbarRoutes } from './Helpers/uiConfig';
+import UsuariosGet from './Pages/MetodosGets/UsuariosGet.jsx';
+import LocalesGet from './Pages/MetodosGets/LocalesGet.jsx';
 
 const AdminPage = lazy(() => import('./Pages/staff/AdminPage'));
 
-
 export default function App() {
+  const { pathname } = useLocation();
+
   const token = localStorage.getItem('token');
   const location = useLocation();
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [location.pathname]);
 
-  const hideNavbar = hiddenNavbarRoutes.includes(location.pathname);
-
+  const hideNavbar = hiddenNavbarRoutes.some((route) =>
+    pathname.startsWith(route)
+  );
   return (
     <AuthProvider>
       {/* El Navbar se mostrará en todas las páginas si está fuera de <Routes> */}
@@ -41,6 +45,25 @@ export default function App() {
             <ProtectedRoute>
               {' '}
               <AdminPage />{' '}
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/dashboard/usuarios"
+          element={
+            <ProtectedRoute>
+              {' '}
+              <UsuariosGet />{' '}
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/sedes"
+          element={
+            <ProtectedRoute>
+              {' '}
+              <LocalesGet />{' '}
             </ProtectedRoute>
           }
         />

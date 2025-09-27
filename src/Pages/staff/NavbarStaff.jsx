@@ -12,25 +12,25 @@ const linksDef = [
     id: 1,
     href: 'dashboard',
     title: 'Dashboard',
-    roles: ['admin', 'empleado']
+    roles: ['admin', 'socio', 'vendedor']
   },
   {
     id: 2,
     href: 'dashboard/usuarios',
     title: 'Usuarios',
-    roles: ['admin', 'administrador']
+    roles: ['admin', 'socio']
   },
   {
     id: 3,
     href: 'dashboard/Sedes',
-    title: 'sedes',
-    roles: ['admin', 'administrador']
+    title: 'Sedes',
+    roles: ['admin', 'socio']
   },
   {
     id: 4,
     href: 'dashboard/logs',
     title: 'Log de Detalle',
-    roles: ['admin', 'administrador']
+    roles: ['admin', 'socio']
   }
 ];
 
