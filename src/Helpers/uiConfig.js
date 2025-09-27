@@ -1,1 +1,1 @@
-export const hiddenNavbarRoutes = ['/login', '/registro', '/recuperar-clave'];
+export const hiddenNavbarRoutes = ['/login', '/dashboard'];
