@@ -17,6 +17,7 @@ import AgendaDeHoyModal from '../staff/Components/AgendaDeHoyModal';
 import * as XLSX from 'xlsx';
 import Swal from 'sweetalert2';
 import FilterToolbar from './Components/FilterToolbar';
+import ParticlesBackground from '../../components/ParticlesBackground';
 
 function getApiBase() {
   return 'http://localhost:8080';
@@ -986,7 +987,16 @@ const VentasProspectosGet = ({ currentUser }) => {
   return (
     <>
       <NavbarStaff />
-      <div className="dashboardbg h-contain pt-10 pb-10">
+      <ParticlesBackground></ParticlesBackground>
+      <div
+        className="
+  min-h-screen 
+  bg-gradient-to-br 
+  from-[#181818] to-[#292929]
+  pt-6 pb-14
+  transition-colors duration-500
+"
+      >
         <div className="bg-white rounded-lg w-11/12 mx-auto pb-2 shadow-md">
           <div className="pl-5 pt-5">
             <Link to="/dashboard">

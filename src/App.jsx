@@ -19,6 +19,7 @@ import LocalesGet from './Pages/MetodosGets/LocalesGet.jsx';
 import LogsSistema from './Pages/MetodosGets/LogsSistema.jsx';
 import LeadsGet from './Pages/MetodosGets/Leads/LeadsGet.jsx';
 import VentasProspectosGet from './Pages/MetodosGets/VentasProspectosGet.jsx';
+import RecaptacionGet from './Pages/MetodosGets/RecaptacionGet.jsx';
 const AdminPage = lazy(() => import('./Pages/staff/AdminPage'));
 
 export default function App() {
@@ -91,6 +92,15 @@ export default function App() {
             <ProtectedRoute>
               {' '}
               <VentasProspectosGet />
+            </ProtectedRoute>
+          }
+        />{' '}
+        <Route
+          path="/dashboard/recaptacion"
+          element={
+            <ProtectedRoute>
+              {' '}
+              <RecaptacionGet />
             </ProtectedRoute>
           }
         />{' '}

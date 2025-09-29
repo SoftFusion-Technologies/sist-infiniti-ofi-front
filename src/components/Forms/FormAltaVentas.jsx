@@ -493,7 +493,7 @@ const inputClass = [
 const selectClass = [
   'bg-black text-white',
   'hover:bg-[#111]',
-  'focus:border-white/20 focus:ring-2 focus:ring-[#fc4b08]/60'
+  'focus:border-white/20 focus:ring-2 focus:ring-[#871cca]/60'
 ].join(' ');
 
 function FieldGroup({ label, name, children, colSpan, icon }) {
