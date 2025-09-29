@@ -46,7 +46,7 @@ const ClasePruebaModal = ({
   return (
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50 p-3">
       <div className="bg-white rounded-2xl p-5 sm:p-6 shadow-2xl w-full max-w-md">
-        <h2 className="text-lg sm:text-xl font-semibold mb-4 text-orange-600">
+        <h2 className="text-lg sm:text-xl font-semibold mb-4 text-purple-600">
           Clase #{numeroClase} — {prospecto?.nombre || 'Prospecto'}
         </h2>
 
@@ -100,7 +100,7 @@ const ClasePruebaModal = ({
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 disabled:opacity-60"
+            className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 disabled:opacity-60"
             disabled={!tipo} // obligamos a elegir tipo
           >
             Guardar
