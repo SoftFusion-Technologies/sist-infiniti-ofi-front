@@ -22,6 +22,8 @@ import { useAuth } from '../../AuthContext';
 import { motion } from 'framer-motion';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import ParticlesBackground from '../ParticlesBackground';
+import VideoLogin from '../../img/staff/videoBienvenida.mp4';
+
 Modal.setAppElement('#root');
 
 const LoginForm = () => {
@@ -103,11 +105,30 @@ const LoginForm = () => {
   };
 
   return (
-    <div className="h-screen w-full loginbg flex items-center justify-center bg-cover bg-center relative">
-      {/* Botón Dark Mode opcional */}
-      {/* <button className="absolute top-5 right-5 text-white">🌙</button> */}
+    <div
+      id="login"
+      className="h-screen w-full flex items-center justify-center bg-cover bg-center relative"
+    >
+      {/* VIDEO DE FONDO */}
+      <video
+        className="absolute top-0 left-0 w-full h-full object-cover z-0"
+        src={VideoLogin}
+        autoPlay
+        muted
+        loop
+        playsInline
+        aria-hidden
+      />
 
-      {/* Tarjeta animada */}
+      {/* PARTICLES: debajo del overlay y sin capturar eventos */}
+      <div className="absolute inset-0 z-[5] pointer-events-none">
+        <ParticlesBackground />
+      </div>
+
+      {/* CAPA OSCURA */}
+      <div className="absolute top-0 left-0 w-full h-full bg-black/40 z-10" />
+
+      {/* TARJETA / FORMULARIO */}
       <motion.div
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -116,7 +137,7 @@ const LoginForm = () => {
           scale: 1.01,
           boxShadow: '0 8px 30px rgba(202, 215, 215, 0.3)'
         }}
-        className="bg-white shadow-2xl rounded-2xl p-8 w-[95%] max-w-md mx-auto"
+        className="relative z-20 bg-white shadow-2xl rounded-2xl p-8 w-[95%] max-w-md mx-auto"
       >
         <h1 className="uppercase text-5xl font-bignoodle font-bold text-center text-gray-600 mb-2">
           Bienvenido
@@ -173,7 +194,10 @@ const LoginForm = () => {
               <button
                 type="button"
                 onClick={toggleShowPassword}
-                className="absolute top-1/2 right-3 transform -translate-y-1/2 text-gray-500 hover:text-gray-500"
+                className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-600"
+                aria-label={
+                  showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
+                }
               >
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
@@ -188,8 +212,9 @@ const LoginForm = () => {
               whileTap={{ scale: 0.95 }}
               type="submit"
               className="bg-gray-500 text-white w-full py-3 rounded-lg font-semibold text-lg shadow-md hover:bg-[#8d9695] transition-all"
+              disabled={loading}
             >
-              Iniciar Sesión
+              {loading ? 'Ingresando...' : 'Iniciar Sesión'}
             </motion.button>
           </div>
         </form>
@@ -200,13 +225,13 @@ const LoginForm = () => {
         </p>
       </motion.div>
 
-      {/* Modal de error */}
+      {/* MODAL DE ERROR */}
       <Modal
         isOpen={isModalOpen}
         onRequestClose={() => setIsModalOpen(false)}
         contentLabel="Error Modal"
         className="flex justify-center items-center h-screen"
-        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center"
+        overlayClassName="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
       >
         <div className="bg-white rounded-lg p-6 max-w-md mx-auto shadow-lg">
           <h2 className="text-lg font-semibold mb-4">Error</h2>
@@ -221,6 +246,7 @@ const LoginForm = () => {
       </Modal>
     </div>
   );
+
 };
 
 export default LoginForm;
