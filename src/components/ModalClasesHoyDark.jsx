@@ -95,7 +95,8 @@ export default function ModalClasesHoyDark({
                 id="modal-title"
                 className="font-extrabold tracking-wide text-[clamp(20px,4vw,40px)]"
               >
-                Clases de prueba agendadas HOY
+                Clases de prueba agendadas{' '}
+                <span className="text-purple-500">HOY</span>
               </h2>
             </div>
 
