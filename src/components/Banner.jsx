@@ -154,7 +154,7 @@ const Banner = ({
         aria-hidden
       />
       {/* Overlay oscuro para el texto */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/60 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent" />
       {/* Contenido */}
       <div className="relative z-10 flex flex-col md:flex-row w-full h-full">
         <div className="flex flex-col justify-center items-start px-6 md:px-12 lg:px-20 py-8 md:py-0 w-full md:w-1/2">
@@ -173,7 +173,7 @@ const Banner = ({
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.35 }}
-            className={`font-druk ${texto_2} leading-tight uppercase mt-2 block text-transparent bg-clip-text bg-gradient-to-r from-slate-400 via-slate-100 to-slate-500 drop-shadow-lg`}
+            className={`font-druk ${texto_2} leading-tight uppercase mt-2 block text-transparent bg-clip-text bg-gradient-to-r from-gray-100 via-gray-200 to-gray-400 drop-shadow-[0_0_5px_rgba(255,255,255,0.3)]`}
           >
             {frase2}
           </motion.span>
