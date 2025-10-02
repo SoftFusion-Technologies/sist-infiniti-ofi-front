@@ -27,7 +27,6 @@ const NotificationBell = () => {
 
         const login = String(userName || '').trim();
 
-        // normalizadores
         const norm = (s) =>
           String(s || '')
             .trim()
@@ -37,7 +36,6 @@ const NotificationBell = () => {
             .split('@')[0]
             ?.toLowerCase();
 
-        // intenta por email exacto, por nombre, y por parte local del email
         const user =
           users.find((u) => norm(u.email) === norm(login)) ||
           users.find((u) => norm(u.nombre) === norm(login)) ||
@@ -46,7 +44,6 @@ const NotificationBell = () => {
         if (user) {
           setUserId(user.id);
         } else {
-          // fallback opcional: elegí el primer admin
           const fallbackAdmin = users.find((u) => norm(u.rol) === 'admin');
           if (fallbackAdmin) {
             console.warn(
@@ -72,11 +69,11 @@ const NotificationBell = () => {
     try {
       if (!userId) return;
 
-      // 1) Lista por usuario (ajusta la ruta si cambiaste a /notifications/user/:userId)
+      // 1) Notificaciones por usuario
       const res = await fetch(`${URL}notifications/${userId}`);
       const data = await res.json();
 
-      // 2) Clases de prueba hoy
+      // 2) Clases de prueba HOY
       const resClases = await fetch(
         `${URL}notifications/clases-prueba/${userId}`
       );
@@ -109,15 +106,6 @@ const NotificationBell = () => {
       const allNotis = [...clasesPruebaNotis, ...filteredData];
       const unread = allNotis.filter((n) => n.leido === 0);
 
-      // seguimiento
-      // console.log('[notis] usuario', userId, {
-      //   totalBackend: (data || []).length,
-      //   totalClases: (clasesPrueba || []).length,
-      //   totalAll: allNotis.length,
-      //   unread: unread.length,
-      //   sample: allNotis[0]
-      // });
-
       setNotifications(allNotis);
       setNewNotificationCount(unread.length);
     } catch (error) {
@@ -138,46 +126,54 @@ const NotificationBell = () => {
       setHideNotificationCounter(true);
     }
 
-    try {
-      const response = await fetch(`${URL}notifications/markAsRead`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          notification_id: notification.id,
-          user_id: userId
-        })
-      });
+    // try {
+    //   const response = await fetch(`${URL}notifications/markAsRead`, {
+    //     method: 'POST',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify({
+    //       notification_id: notification.id,
+    //       user_id: userId
+    //     })
+    //   });
 
-      const result = await response.json();
-      if (response.ok) {
-        const updatedNotifications = notifications.map((n) =>
-          n.id === notification.id ? { ...n, leido: 1 } : n
-        );
-        setNotifications(updatedNotifications);
-      } else {
-        console.error(result.mensajeError);
-      }
-    } catch (error) {
-      console.error('Error al marcar la notificación como leída:', error);
-    }
+    //   const result = await response.json();
+    //   if (response.ok) {
+    //     const updatedNotifications = notifications.map((n) =>
+    //       n.id === notification.id ? { ...n, leido: 1 } : n
+    //     );
+    //     setNotifications(updatedNotifications);
+    //   } else {
+    //     console.error(result.mensajeError);
+    //   }
+    // } catch (error) {
+    //   console.error('Error al marcar la notificación como leída:', error);
+    // }
   };
 
+  // normalizador con tildes
+  const normalize = (s = '') =>
+    s
+      .toString()
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .trim()
+      .toLowerCase();
+
   const handleRedirect = (notification) => {
-    const title = String(notification?.title || '')
-      .toLowerCase()
-      .trim();
-    const module = String(notification?.module || '')
-      .toLowerCase()
-      .trim();
+    const titleRaw = String(notification?.title || '');
+    const msgRaw = String(notification?.message || '');
+    const moduleRaw = String(notification?.module || '');
+    const typeRaw = String(notification?.type || '');
     const refId = notification?.reference_id;
+    if (!refId) return;
 
-    if (!refId) return; // sin id no redirigimos
-
-    // Helpers
+    const title = normalize(titleRaw);
+    const text = normalize(`${titleRaw} ${msgRaw}`); // por si el “agendada hoy” viniera en message
+    const module = normalize(moduleRaw);
+    const type = normalize(typeRaw);
     const is = (t) => title === t;
 
+    // Reglas directas
     if (is('nueva queja registrada')) {
       navigate(`/dashboard/quejas/${refId}`);
       return;
@@ -188,24 +184,37 @@ const NotificationBell = () => {
       return;
     }
 
-    // 🔸 Clase de prueba → LEADS
-    if (
-      is('nueva clase de prueba registrada') ||
-      is('clase de prueba agendada hoy') ||
-      notification?.type === 'clase_prueba' ||
-      module === 'clases_de_prueba'
-    ) {
-      // Pasá el id por estado (o por query si preferís)
-      navigate('/dashboard/leads', { state: { prospectoId: refId } });
-      return;
-    }
-
     if (is('nueva pregunta frecuente registrada')) {
       navigate(`/dashboard/ask/${refId}`);
       return;
     }
 
-    // Fallback: si el módulo viniera mapeado, podés rutear por módulo
+    // ---- CLASES DE PRUEBA ----
+    const startsWithNueva = text.startsWith('nueva ');
+    const isClasePrueba =
+      module === 'clases_de_prueba' ||
+      type === 'clase_prueba' ||
+      title.includes('clase de prueba');
+    const isAgendadaHoy =
+      text.includes('agendada hoy') ||
+      text.includes('agenda hoy') ||
+      type === 'clase_prueba_agendada';
+
+    // a) "clase de prueba agendada hoy" -> VENTAS
+    if (isClasePrueba && isAgendadaHoy) {
+      navigate('/dashboard/ventas', {
+        state: { agendaHoy: true, prospectoId: refId }
+      });
+      return;
+    }
+
+    // b) cualquier "nueva ..." -> LEADS (incluye "Nueva clase de prueba registrada")
+    if (startsWithNueva) {
+      navigate('/dashboard/leads', { state: { prospectoId: refId } });
+      return;
+    }
+
+    // fallback por módulo si hiciera falta:
     // if (module === 'algo') navigate('/dashboard/lo-que-sea');
   };
 
@@ -238,7 +247,9 @@ const NotificationBell = () => {
                   }`}
                 >
                   <div className="flex flex-col">
-                    <strong className="text-lg text-gray-900 uppercase">{n.title}</strong>
+                    <strong className="text-lg text-gray-900 uppercase">
+                      {n.title}
+                    </strong>
                     <div className="mt-1 text-gray-800 text-sm">
                       {n.message}
                     </div>
