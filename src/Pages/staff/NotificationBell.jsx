@@ -109,13 +109,14 @@ const NotificationBell = () => {
       const allNotis = [...clasesPruebaNotis, ...filteredData];
       const unread = allNotis.filter((n) => n.leido === 0);
 
-      console.log('[notis] usuario', userId, {
-        totalBackend: (data || []).length,
-        totalClases: (clasesPrueba || []).length,
-        totalAll: allNotis.length,
-        unread: unread.length,
-        sample: allNotis[0]
-      });
+      // seguimiento
+      // console.log('[notis] usuario', userId, {
+      //   totalBackend: (data || []).length,
+      //   totalClases: (clasesPrueba || []).length,
+      //   totalAll: allNotis.length,
+      //   unread: unread.length,
+      //   sample: allNotis[0]
+      // });
 
       setNotifications(allNotis);
       setNewNotificationCount(unread.length);

@@ -63,8 +63,6 @@ export default function StatsVentasModal({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  console.log(sede);
-
   // Ejemplo de uso correcto:
   useEffect(() => {
     if (open) {

@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
     const id = localStorage.getItem('userId');
     const name = localStorage.getItem('userName');
     const email = localStorage.getItem('userEmail');
-    const role = localStorage.getItem('userLevel');
+    const rol = localStorage.getItem('userLevel');
     const localId = localStorage.getItem('userLocalId');
     const isReemplazante = localStorage.getItem('userIsReemplazante');
 
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }) => {
     if (id) setUserId(id);
     if (name) setUserName(name);
     if (email) setUserEmail(email);
-    if (role) setUserLevel(role);
+    if (rol) setUserLevel(rol);
     if (localId) setUserLocalId(localId);
     if (isReemplazante) setUserIsReemplazante(isReemplazante === 'true');
 
@@ -89,12 +89,12 @@ export const AuthProvider = ({ children }) => {
     };
   }, []);
 
-  const login = (token, id, name, email, role, localId, esReemplazante) => {
+  const login = (token, id, name, email, rol, localId, esReemplazante) => {
     setAuthToken(token);
     setUserId(id);
     setUserName(name);
     setUserEmail(email);
-    setUserLevel(role);
+    setUserLevel(rol);
     setUserLocalId(localId);
     setUserIsReemplazante(!!esReemplazante);
 
@@ -102,7 +102,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('userId', id);
     localStorage.setItem('userName', name);
     localStorage.setItem('userEmail', email);
-    localStorage.setItem('userLevel', role);
+    localStorage.setItem('userLevel', rol);
     localStorage.setItem('userLocalId', localId);
     localStorage.setItem('userIsReemplazante', (!!esReemplazante).toString());
   };

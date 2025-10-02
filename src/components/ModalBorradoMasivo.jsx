@@ -219,7 +219,7 @@ const ModalBorradoMasivo = ({
                 <option value="">Selecciona un usuario</option>
                 {colaboradores.map((u) => (
                   <option key={u.id} value={u.id}>
-                    {u.name} (ID: {u.id})
+                    {u.nombre} (ID: {u.id})
                   </option>
                 ))}
               </select>

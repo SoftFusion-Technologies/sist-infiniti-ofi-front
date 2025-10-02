@@ -38,7 +38,7 @@ const RecaptacionGet = () => {
     detalle: ''
   });
 
-  const { userLevel, userId } = useAuth();
+  const { userLevel, userId, userLocalId } = useAuth();
 
   const [modalNewRec, setModalNewRecaptacion] = useState(false);
   const [selectedRec, setSelectedRecaptacion] = useState(null);
@@ -55,27 +55,32 @@ const RecaptacionGet = () => {
 
   const getRecaptacion = async () => {
     try {
-      const params = { level: userLevel };
-      if (userLevel !== 'admin' && userLevel !== 'coordinador')
-        params.usuario_id = userId;
+      const params = { rol: userLevel };
+      if (userLevel !== 'admin') {
+        params.usuario_id = userId; // no-admin debe enviar su id
+      }
       if (mes) params.mes = mes;
       if (anio) params.anio = anio;
 
-      const res = await axios.get(URL, { params });
-      const resUsers = await axios.get(
-        'http://localhost:8080/users'
-      );
+      // if (userLevel === 'admin' && userLocalId) {
+      //   params.local_id = userLocalId;
+      // }
+
+      const [res, resUsers] = await Promise.all([
+        axios.get(URL, { params }),
+        axios.get('http://localhost:8080/users')
+      ]);
 
       setRecaptaciones(res.data);
       setUsuarios(resUsers.data);
     } catch (error) {
-      console.log(error);
+      console.error('[getRecaptacion] ', error);
     }
   };
 
   const obtenerNombreUsuario = (usuario_id) => {
     const usuario = usuarios.find((u) => u.id === usuario_id);
-    return usuario ? usuario.name : 'Sin usuario';
+    return usuario ? usuario.nombre : 'Sin usuario';
   };
 
   const handleSearch = (e) => setSearch(e.target.value);
@@ -146,9 +151,7 @@ const RecaptacionGet = () => {
   };
 
   const fetchColaboradores = async () => {
-    const res = await axios.get(
-      'http://localhost:8080/usuarios-con-registros'
-    );
+    const res = await axios.get('http://localhost:8080/usuarios-con-registros');
     setColaboradores(res.data);
   };
 
@@ -169,12 +172,9 @@ const RecaptacionGet = () => {
   );
 
   const borrarPorMesAnio = async (mes, anio) => {
-    return await axios.delete(
-      'http://localhost:8080/recaptacion-masivo',
-      {
-        params: { mes, anio }
-      }
-    );
+    return await axios.delete('http://localhost:8080/recaptacion-masivo', {
+      params: { mes, anio }
+    });
   };
 
   const borrarPorUsuario = async (usuario_id) => {
@@ -254,7 +254,7 @@ const RecaptacionGet = () => {
                 <option value="">Todos los colaboradores</option>
                 {colaboradores.map((colab) => (
                   <option key={colab.id} value={colab.id}>
-                    {colab.name}
+                    {colab.nombre}
                   </option>
                 ))}
               </select>
@@ -275,7 +275,7 @@ const RecaptacionGet = () => {
           <div className="overflow-x-auto rounded-3xl border border-orange-100 mt-4 shadow-2xl">
             <table className="min-w-full text-base md:text-lg text-gray-700 rounded-3xl">
               <thead>
-                <tr className="bg-[#871cca] text-white font-bold text-lg sticky top-0 z-10 shadow">
+                <tr className="uppercase bg-[#871cca] text-white font-bold text-lg sticky top-0 z-10 shadow">
                   <th className="py-4 px-2">ID</th>
                   <th className="py-4 px-2">Fecha</th>
                   <th className="py-4 px-2">Usuario</th>

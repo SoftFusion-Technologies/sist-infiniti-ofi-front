@@ -13,7 +13,6 @@ import BadgeTestClasses from '../MetodosGets/Leads/BadgeTestClasses.jsx';
 
 const AdminPage = () => {
   const { userId, userLevel, userName } = useAuth();
-
   // Evita que el componente se renderice hasta que userLevel esté definido
   if (!userLevel) {
     return (
