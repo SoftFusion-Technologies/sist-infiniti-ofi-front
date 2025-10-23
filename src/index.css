@@ -1,12 +1,30 @@
 @import "tailwindcss";
-
-/* Aplica Montserrat a todo el cuerpo de la página */
-body {
-  font-family: 'Montserrat', sans-serif;
+@font-face {
+  font-family: 'Montserrat';
+  src: url('./font/Montserrat-VariableFont_wght.ttf') format('truetype');
+  font-weight: 100 900; 
+  font-style: normal;
 }
 
-/* También puedes especificar pesos de fuente si quieres que ciertos elementos tengan un peso por defecto */
-/* Por ejemplo, todos los h1 serán Montserrat bold */
+@font-face {
+  font-family: "BigNoodle";
+  src: url('./font/big_noodle_titling.ttf') format('truetype'); 
+}
+
+@font-face {
+  font-family: "MessinaRegular";
+  src: url('./font/MessinaSans-Regular.ttf') format('truetype'); 
+}
+
+
+/* 3. Aplica Montserrat a todo el proyecto (¡Esta es la línea clave!) */
+body {
+  font-family: 'MessinaRegular', sans-serif;
+}
+
+
+/* --- El resto de tu código (lo dejamos como estaba por las dudas) --- */
+
 h1 {
   font-family: 'Montserrat', sans-serif;
   font-weight: 700; /* Negrita */
@@ -27,17 +45,6 @@ h1 {
 .cuerpo {
   font-family: var(--font-family-base);
   font-weight: var(--font-weight-regular);
-}
-
-
-@font-face {
-  font-family: "BigNoodle";
-  src: url('./font/big_noodle_titling.ttf') format('truetype'); 
-}
-
-@font-face {
-  font-family: "MessinaRegular";
-  src: url('./font/MessinaSans-Regular.ttf') format('truetype'); 
 }
 
 .font-bignoodle {
