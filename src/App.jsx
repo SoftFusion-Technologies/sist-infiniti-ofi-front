@@ -20,6 +20,8 @@ import LogsSistema from './Pages/MetodosGets/LogsSistema.jsx';
 import LeadsGet from './Pages/MetodosGets/Leads/LeadsGet.jsx';
 import VentasProspectosGet from './Pages/MetodosGets/VentasProspectosGet.jsx';
 import RecaptacionGet from './Pages/MetodosGets/RecaptacionGet.jsx';
+import EjerciciosCatalogo from './Pages/Components/EjerciciosCatalogo';
+
 const AdminPage = lazy(() => import('./Pages/staff/AdminPage'));
 
 export default function App() {
@@ -101,6 +103,15 @@ export default function App() {
             <ProtectedRoute>
               {' '}
               <RecaptacionGet />
+            </ProtectedRoute>
+          }
+        />{' '}
+        <Route
+          path="/dashboard/ejercicios"
+          element={
+            <ProtectedRoute>
+              {' '}
+              <EjerciciosCatalogo />{' '}
             </ProtectedRoute>
           }
         />{' '}
