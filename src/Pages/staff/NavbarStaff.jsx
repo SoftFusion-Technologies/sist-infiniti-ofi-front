@@ -28,6 +28,12 @@ const linksDef = [
   },
   {
     id: 4,
+    href: 'dashboard/administracion-colores',
+    title: 'Adm. Colores',
+    roles: ['admin', 'instructor'] // Benjamin Orellana INI / 12/06/2024 /nueva forma de gestionar los accesos
+  },
+  {
+    id:5,
     href: 'dashboard/logs',
     title: 'Log de Detalle',
     roles: ['admin', 'socio']

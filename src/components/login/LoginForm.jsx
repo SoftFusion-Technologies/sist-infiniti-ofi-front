@@ -1,20 +1,20 @@
 /*
  * Programador: Benjamin Orellana
  * Fecha Actualización: 21 / 06 / 2025
- * Versión: 1.1
+ * Versión: 2.0 (unificado: staff + alumno)
  *
  * Descripción:
- * Este archivo (LoginForm.jsx) es el formulario exclusivo de login de usuarios (email + password),
- * autenticado contra la base de datos y gestionado con JWT.
- *
- * Tema: Renderización - Login
- * Capa: Frontend
+ * Form de login con dos modos:
+ *  - Staff (email + password) -> /login
+ *  - Alumno (teléfono + DNI)  -> /soyalumno
+ * Detecta por ruta actual con useLocation. Mantiene fondo de video, Particles,
+ * modal de error, y añade loginAlumno en AuthContext.
  */
 
 import React, { useState, useEffect } from 'react';
 import Modal from 'react-modal';
 import Alerta from '../Error';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Validation from './LoginValidation';
 import axios from 'axios';
 import '../../Styles/login.css';
@@ -28,11 +28,16 @@ Modal.setAppElement('#root');
 
 const LoginForm = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const location = useLocation();
+  const isAlumno = location.pathname === '/soyalumno';
+
+  const { login, loginAlumno } = useAuth();
 
   const [values, setValues] = useState({
     email: '',
-    password: ''
+    password: '',
+    telefono: '',
+    dni: ''
   });
 
   const [showPassword, setShowPassword] = useState(false);
@@ -41,16 +46,18 @@ const LoginForm = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
+  // Scroll al montar
   useEffect(() => {
     const element = document.getElementById('login');
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    if (element) element.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, []);
 
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  // Limpia marca previa de nivel si se abre modo alumno
+  useEffect(() => {
+    if (isAlumno) localStorage.setItem('userLevel', 'alumno');
+  }, [isAlumno]);
+
+  const toggleShowPassword = () => setShowPassword((s) => !s);
 
   const handleInput = (event) => {
     setValues((prev) => ({
@@ -61,20 +68,37 @@ const LoginForm = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const validationErrors = Validation(values);
+
+    const validationErrors = Validation(values, location.pathname);
     setErrors(validationErrors);
 
-    if (Object.keys(validationErrors).length === 0) {
-      setLoading(true);
+    // debug opcional
+    // console.log('validationErrors', validationErrors);
 
-      axios
-        .post('http://localhost:8080/login', {
-          email: values.email,
-          password: values.password
-        })
-        .then((res) => {
-          setLoading(false);
-          if (res.data.message === 'Success') {
+    if (Object.keys(validationErrors).length !== 0) return;
+
+    setLoading(true);
+
+    const endpoint = isAlumno
+      ? 'http://localhost:8080/loginAlumno'
+      : 'http://localhost:8080/login';
+
+    const payload = isAlumno
+      ? { telefono: values.telefono, dni: values.dni }
+      : { email: values.email, password: values.password };
+
+    axios
+      .post(endpoint, payload)
+      .then((res) => {
+        setLoading(false);
+
+        if (res?.data?.message === 'Success') {
+          if (isAlumno) {
+            loginAlumno(res.data.token, res.data.nomyape, res.data.id);
+            localStorage.setItem('userLevel', 'alumno');
+            navigate(`/miperfil/student/${res.data.id}`);
+          } else {
+            // ✅ pasar todos los argumentos esperados
             login(
               res.data.token,
               res.data.id,
@@ -82,26 +106,25 @@ const LoginForm = () => {
               res.data.email,
               res.data.rol,
               res.data.local_id,
-              res.data.es_reemplazante
+              res.data.es_reemplazante ?? false
             );
-
-            if (res.data.rol === 'vendedor') {
-              navigate('/dashboard');
-            } else {
-              navigate('/dashboard');
-            }
-          } else {
-            setModalMessage('Usuario o contraseña incorrectos');
-            setIsModalOpen(true);
+            localStorage.setItem('userLevel', res.data.rol);
+            navigate('/dashboard');
           }
-        })
-        .catch((err) => {
-          setLoading(false);
-          console.error(err);
-          setModalMessage('Error al conectar con el servidor');
+        } else {
+          // manejar Fail del backend (asegúrate de devolver {message:'Fail'})
+          setModalMessage(
+            res?.data?.error || 'Usuario o credenciales inválidas'
+          );
           setIsModalOpen(true);
-        });
-    }
+        }
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.error('LOGIN ERROR', err);
+        setModalMessage('Error al conectar con el servidor');
+        setIsModalOpen(true);
+      });
   };
 
   return (
@@ -120,7 +143,7 @@ const LoginForm = () => {
         aria-hidden
       />
 
-      {/* PARTICLES: debajo del overlay y sin capturar eventos */}
+      {/* PARTICLES */}
       <div className="absolute inset-0 z-[5] pointer-events-none">
         <ParticlesBackground />
       </div>
@@ -135,12 +158,12 @@ const LoginForm = () => {
         transition={{ duration: 0.6, ease: 'easeOut' }}
         whileHover={{
           scale: 1.01,
-          boxShadow: '0 8px 30px rgba(202, 215, 215, 0.3)'
+          boxShadow: '0 8px 30px rgba(202,215,215,0.3)'
         }}
         className="relative z-20 bg-white shadow-2xl rounded-2xl p-8 w-[95%] max-w-md mx-auto"
       >
         <h1 className="uppercase text-5xl font-bignoodle font-bold text-center text-gray-600 mb-2">
-          Bienvenido
+          {isAlumno ? 'Bienvenido Alumno' : 'Bienvenido'}
         </h1>
 
         <motion.p
@@ -149,79 +172,92 @@ const LoginForm = () => {
           transition={{ delay: 0.2 }}
           className="text-center text-sm text-gray-500 mb-6"
         >
-          Iniciá sesión para acceder al panel
+          {isAlumno
+            ? 'Ingresá tu teléfono y DNI para entrar a tu perfil'
+            : 'Iniciá sesión para acceder al panel'}
         </motion.p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Email */}
+          {/* Campo 1: Email o Teléfono */}
           <div>
             <label
-              htmlFor="email"
+              htmlFor={isAlumno ? 'telefono' : 'email'}
               className="block text-sm font-medium text-gray-700"
             >
-              Correo Electrónico
+              {isAlumno ? 'Teléfono' : 'Correo Electrónico'}
             </label>
             <motion.input
               whileFocus={{ scale: 1.02 }}
-              id="email"
-              type="email"
-              name="email"
-              placeholder="ejemplo@correo.com"
+              id={isAlumno ? 'telefono' : 'email'}
+              type={isAlumno ? 'text' : 'email'}
+              name={isAlumno ? 'telefono' : 'email'}
+              placeholder={isAlumno ? 'Ej: 3811234567' : 'ejemplo@correo.com'}
               className="w-full mt-1 p-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 transition-all"
               onChange={handleInput}
             />
-            {errors.email && <Alerta>{errors.email}</Alerta>}
+            {isAlumno
+              ? errors.telefono && <Alerta>{errors.telefono}</Alerta>
+              : errors.email && <Alerta>{errors.email}</Alerta>}
           </div>
 
-          {/* Contraseña */}
+          {/* Campo 2: DNI o Password */}
           <div>
             <label
-              htmlFor="password"
+              htmlFor={isAlumno ? 'dni' : 'password'}
               className="block text-sm font-medium text-gray-700"
             >
-              Contraseña
+              {isAlumno ? 'DNI' : 'Contraseña'}
             </label>
             <div className="relative">
               <motion.input
                 whileFocus={{ scale: 1.02 }}
-                id="password"
-                type={showPassword ? 'text' : 'password'}
-                name="password"
-                placeholder="••••••••"
+                id={isAlumno ? 'dni' : 'password'}
+                type={isAlumno ? 'text' : showPassword ? 'text' : 'password'}
+                name={isAlumno ? 'dni' : 'password'}
+                placeholder={isAlumno ? 'Documento de Identidad' : '••••••••'}
                 className="w-full mt-1 p-3 bg-gray-50 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:border-gray-400 transition-all pr-10"
                 onChange={handleInput}
               />
-              <button
-                type="button"
-                onClick={toggleShowPassword}
-                className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-600"
-                aria-label={
-                  showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
-                }
-              >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </button>
+              {!isAlumno && (
+                <button
+                  type="button"
+                  onClick={toggleShowPassword}
+                  className="absolute top-1/2 right-3 -translate-y-1/2 text-gray-500 hover:text-gray-600"
+                  aria-label={
+                    showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
+                  }
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              )}
             </div>
-            {errors.password && <Alerta>{errors.password}</Alerta>}
+            {isAlumno
+              ? errors.dni && <Alerta>{errors.dni}</Alerta>
+              : errors.password && <Alerta>{errors.password}</Alerta>}
           </div>
 
-          {/* Botón de envío */}
+          {/* Botón */}
           <div className="text-center">
             <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
               type="submit"
-              className="bg-gray-500 text-white w-full py-3 rounded-lg font-semibold text-lg shadow-md hover:bg-[#8d9695] transition-all"
               disabled={loading}
+              className={`w-full py-3 rounded-lg font-semibold text-lg shadow-md transition-all
+    ${
+      loading
+        ? 'bg-gray-400 cursor-not-allowed'
+        : 'bg-gray-500 hover:bg-[#8d9695] text-white'
+    }
+  `}
             >
-              {loading ? 'Ingresando...' : 'Iniciar Sesión'}
+              {loading ? 'Ingresando…' : 'Iniciar Sesión'}
             </motion.button>
           </div>
         </form>
 
-        {/* Frase motivadora */}
         <p className="mt-6 text-center text-xs text-gray-400 italic">
-          "La constancia supera al talento"
+          {isAlumno
+            ? 'El esfuerzo de hoy es el éxito de mañana'
+            : 'La constancia supera al talento'}
         </p>
       </motion.div>
 
@@ -246,7 +282,6 @@ const LoginForm = () => {
       </Modal>
     </div>
   );
-
 };
 
 export default LoginForm;

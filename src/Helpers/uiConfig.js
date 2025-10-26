@@ -1,1 +1,6 @@
-export const hiddenNavbarRoutes = ['/login', '/dashboard'];
+export const hiddenNavbarRoutes = [
+  '/login',
+  '/dashboard',
+  '/soyalumno',
+  '/miperfil'
+];

@@ -33,7 +33,7 @@ export default function UsuariosGet() {
   const [passwordValid, setPasswordValid] = useState(true);
 
   // helpers
-  const allowedRoles = ['admin', 'Socio', 'vendedor'];
+  const allowedRoles = ['admin', 'Socio', 'vendedor', 'instructor'];
   const passPolicyOk = (pwd) => {
     if (!pwd || pwd.length < 8) return false;
     const hasUpper = /[A-Z]/.test(pwd);
@@ -270,6 +270,7 @@ export default function UsuariosGet() {
                   <option value="admin">Admin</option>
                   <option value="socio">Socio</option>
                   <option value="vendedor">Vendedor</option>
+                  <option value="instructor">Instructor</option>
                 </select>
               </div>
 
@@ -291,11 +292,10 @@ export default function UsuariosGet() {
               </div>
             </div>
           </div>
-
-          <div className="overflow-auto rounded-2xl shadow-xl bg-white/5 backdrop-blur-sm">
-            <table className="w-full text-sm text-left text-white">
-              <thead className="uppercase bg-indigo-600/80">
-                <tr className="text-sm text-white">
+          <div className="overflow-x-auto rounded-3xl shadow-2xl ring-1 ring-white/10 bg-slate-950/80 backdrop-blur-xl">
+            <table className="w-full text-base md:text-[15px] text-left text-slate-200">
+              <thead className="uppercase bg-indigo-600/90 text-white sticky top-0 z-10">
+                <tr className="text-[13px] tracking-wide">
                   <th className="px-6 py-4">Nombre</th>
                   <th className="px-6 py-4">Email</th>
                   <th className="px-6 py-4">Rol</th>
@@ -305,51 +305,60 @@ export default function UsuariosGet() {
                 </tr>
               </thead>
               <tbody>
-                {filtered.map((u) => (
+                {filtered.map((u, i) => (
                   <tr
                     key={u.id}
-                    className="border-b border-white/10 hover:bg-white/10 transition"
+                    className={` border-t border-white/10 ${
+                      i % 2 === 0 ? 'bg-white/[0.03]' : 'bg-white/[0.05]'
+                    } hover:bg-white/10 transition-colors`}
                   >
-                    <td className="px-6 py-3 font-medium text-white/90">
+                    <td className="text-purple-400 px-6 py-4 font-semibold ">
                       {u.nombre}
                     </td>
-                    <td className="px-6 py-3 text-white/80">{u.email}</td>
-                    <td className="px-6 py-3 capitalize text-white/80">
+                    <td className="text-purple-400 px-6 py-4 ">{u.email}</td>
+                    <td className="text-purple-400 px-6 py-4 capitalize ">
                       {u.rol}
                     </td>
-                    <td className="px-6 py-3 text-white/80">
+                    <td className="text-purple-400 px-6 py-4 ">
                       {locales.find((l) => l.id === u.local_id)?.nombre || '-'}
                     </td>
-                    {/* pill
-                    <td className="px-6 py-3">
-                      <div className="flex justify-center">
-                        {u.es_reemplazante ? (
-                          <span className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-400/30">
-                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />{' '}
-                            Sí
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 ring-1 ring-rose-400/30">
-                            <span className="w-2 h-2 rounded-full bg-rose-400" />{' '}
-                            No
-                          </span>
-                        )}
-                      </div>
-                    </td> */}
 
-                    <td className="px-6 py-3 text-center flex justify-center gap-4">
-                      <button
-                        onClick={() => openModal(u)}
-                        className="text-yellow-400 hover:text-yellow-300"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(u.id)}
-                        className="text-red-500 hover:text-red-400"
-                      >
-                        <FaTrash />
-                      </button>
+                    {/* pill
+          <td className="px-6 py-3">
+            <div className="flex justify-center">
+              {u.es_reemplazante ? (
+                <span className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 ring-1 ring-emerald-400/30">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />{' '}
+                  Sí
+                </span>
+              ) : (
+                <span className="inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full bg-rose-500/20 text-rose-300 ring-1 ring-rose-400/30">
+                  <span className="w-2 h-2 rounded-full bg-rose-400" />{' '}
+                  No
+                </span>
+              )}
+            </div>
+          </td> */}
+
+                    <td className="px-6 py-4">
+                      <div className="flex justify-center gap-3">
+                        <button
+                          onClick={() => openModal(u)}
+                          className="inline-flex items-center justify-center h-10 w-10 rounded-xl border border-white/10 text-yellow-300 hover:bg-yellow-400/10 hover:text-yellow-200 focus:outline-none focus:ring-2 focus:ring-yellow-400/40"
+                          aria-label="Editar"
+                          title="Editar"
+                        >
+                          <FaEdit />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(u.id)}
+                          className="inline-flex items-center justify-center h-10 w-10 rounded-xl border border-white/10 text-rose-300 hover:bg-rose-400/10 hover:text-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-400/40"
+                          aria-label="Eliminar"
+                          title="Eliminar"
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -421,6 +430,7 @@ export default function UsuariosGet() {
                 <option value="admin">Admin</option>
                 <option value="socio">Socio</option>
                 <option value="vendedor">Vendedor</option>
+                <option value="instructor">Instructor</option>
               </select>
               <select
                 value={formData.local_id || ''}

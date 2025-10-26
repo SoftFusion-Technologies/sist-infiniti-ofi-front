@@ -21,6 +21,9 @@ import LeadsGet from './Pages/MetodosGets/Leads/LeadsGet.jsx';
 import VentasProspectosGet from './Pages/MetodosGets/VentasProspectosGet.jsx';
 import RecaptacionGet from './Pages/MetodosGets/RecaptacionGet.jsx';
 import EjerciciosCatalogo from './Pages/Components/EjerciciosCatalogo';
+import AlumnosGet from './Pages/MetodosGets/AlumnosGet.jsx';
+import PerfilAlumno from './Pages/MetodosGets/AlumnoPerfil/PerfilAlumno.jsx';
+import ColoresRutinaCrud from './Pages/MetodosGets/ColoresRutinaCrud.jsx';
 
 const AdminPage = lazy(() => import('./Pages/staff/AdminPage'));
 
@@ -52,6 +55,7 @@ export default function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/soyalumno" element={<LoginForm />} />
         <Route
           path="/dashboard/usuarios"
           element={
@@ -112,6 +116,42 @@ export default function App() {
             <ProtectedRoute>
               {' '}
               <EjerciciosCatalogo />{' '}
+            </ProtectedRoute>
+          }
+        />{' '}
+        <Route
+          path="/dashboard/alumnos"
+          element={
+            <ProtectedRoute>
+              {' '}
+              <AlumnosGet />{' '}
+            </ProtectedRoute>
+          }
+        />{' '}
+        <Route
+          path="/dashboard/student/:id"
+          element={
+            <ProtectedRoute>
+              {' '}
+              <PerfilAlumno />{' '}
+            </ProtectedRoute>
+          }
+        />{' '}
+        <Route
+          path="/miperfil/student/:id"
+          element={
+            <ProtectedRoute>
+              {' '}
+              <PerfilAlumno />{' '}
+            </ProtectedRoute>
+          }
+        />{' '}
+        <Route
+          path="/dashboard/administracion-colores"
+          element={
+            <ProtectedRoute>
+              {' '}
+              <ColoresRutinaCrud />{' '}
             </ProtectedRoute>
           }
         />{' '}
