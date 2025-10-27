@@ -318,7 +318,7 @@ const LogsSistema = () => {
               animate={{ scale: 1 }}
               exit={{ scale: 0.95 }}
               transition={{ duration: 0.3 }}
-              className="bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] border border-blue-800 rounded-3xl shadow-[0_0_30px_rgba(59,130,246,0.4)] w-full max-w-2xl p-8 relative text-white"
+              className="bg-gradient-to-br from-[#0f172a] via-[#1e293b] to-[#0f172a] border border-purple-800 rounded-3xl shadow-[0_0_30px_rgba(59,130,246,0.4)] w-full max-w-2xl p-8 relative text-white"
             >
               {/* Botón cerrar */}
               <button
@@ -330,21 +330,21 @@ const LogsSistema = () => {
 
               {/* Título */}
               <h2 className="text-3xl titulo uppercase font-extrabold text-white mb-6 flex items-center gap-3 border-b border-white/20 pb-4 drop-shadow-lg">
-                <FaUserShield className="text-blue-400" />
+                <FaUserShield className="text-purple-400" />
                 Detalle Completo del Log
               </h2>
 
               {/* Contenido */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-sm">
                 <div className="flex flex-col">
-                  <span className="text-xs uppercase text-blue-300 mb-1">
+                  <span className="text-xs uppercase text-purple-300 mb-1">
                     ID
                   </span>
                   <span className="font-semibold">{selectedLog.id}</span>
                 </div>
 
                 <div className="flex flex-col">
-                  <span className="text-xs uppercase text-blue-300 mb-1">
+                  <span className="text-xs uppercase text-purple-300 mb-1">
                     Usuario
                   </span>
                   <span className="font-semibold">
@@ -353,14 +353,14 @@ const LogsSistema = () => {
                 </div>
 
                 <div className="flex flex-col">
-                  <span className="text-xs uppercase text-blue-300 mb-1">
+                  <span className="text-xs uppercase text-purple-300 mb-1">
                     Email
                   </span>
                   <span>{selectedLog.usuario?.email}</span>
                 </div>
 
                 <div className="flex flex-col">
-                  <span className="text-xs uppercase text-blue-300 mb-1">
+                  <span className="text-xs uppercase text-purple-300 mb-1">
                     Acción
                   </span>
                   <span
@@ -377,23 +377,23 @@ const LogsSistema = () => {
                 </div>
 
                 <div className="flex flex-col">
-                  <span className="text-xs uppercase text-blue-300 mb-1">
+                  <span className="text-xs uppercase text-purple-300 mb-1">
                     Módulo
                   </span>
                   <span className="capitalize">{selectedLog.modulo}</span>
                 </div>
 
                 <div className="flex flex-col md:col-span-2">
-                  <span className="text-xs uppercase text-blue-300 mb-1">
+                  <span className="text-xs uppercase text-purple-300 mb-1">
                     Descripción
                   </span>
-                  <div className="bg-blue-900/50 p-4 rounded-xl border border-blue-600 text-white/90 leading-relaxed shadow-inner">
+                  <div className="bg-purple-900/50 p-4 rounded-xl border border-purple-600 text-white/90 leading-relaxed shadow-inner">
                     {selectedLog.descripcion}
                   </div>
                 </div>
 
                 <div className="flex flex-col">
-                  <span className="text-xs uppercase text-blue-300 mb-1">
+                  <span className="text-xs uppercase text-purple-300 mb-1">
                     Fecha
                   </span>
                   <span>
@@ -402,7 +402,7 @@ const LogsSistema = () => {
                 </div>
 
                 <div className="flex flex-col">
-                  <span className="text-xs uppercase text-blue-300 mb-1">
+                  <span className="text-xs uppercase text-purple-300 mb-1">
                     IP
                   </span>
                   <span>{selectedLog.ip}</span>

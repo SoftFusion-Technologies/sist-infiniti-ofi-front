@@ -376,7 +376,7 @@ const ModalCrearRutina = ({ studentId, userId, onClose, onRutinaCreada }) => {
                 <button
                   type="button"
                   onClick={() => setModalColorIdx(bloqueIdx)}
-                  className="text-sm font-semibold px-4 py-2 rounded-xl bg-gradient-to-r bg-blue-600 text-white shadow-md hover:scale-105 transition-all duration-200"
+                  className="text-sm font-semibold px-4 py-2 rounded-xl bg-gradient-to-r bg-purple-600 text-white shadow-md hover:scale-105 transition-all duration-200"
                 >
                   Elegir color
                 </button>
@@ -474,7 +474,7 @@ const ModalCrearRutina = ({ studentId, userId, onClose, onRutinaCreada }) => {
                 {/* Botón original Replicar */}
                 <button
                   type="button"
-                  className="mb-3 px-3 py-1 mt-2 rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-all text-sm"
+                  className="mb-3 px-3 py-1 mt-2 rounded-md bg-purple-600 text-white hover:bg-purple-700 transition-all text-sm"
                   onClick={(e) => {
                     e.stopPropagation();
                     replicarEjercicio(bloqueIdx, ejIdx);
@@ -698,7 +698,7 @@ const ModalCrearRutina = ({ studentId, userId, onClose, onRutinaCreada }) => {
 
         <button
           onClick={agregarBloque}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl mb-6 w-full"
+          className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-xl mb-6 w-full"
         >
           + Agregar bloque
         </button>
@@ -733,7 +733,7 @@ const ModalCrearRutina = ({ studentId, userId, onClose, onRutinaCreada }) => {
                     }}
                     className={`flex-1 min-w-[100px] p-4 rounded-xl border-4 ${
                       seleccionado
-                        ? 'border-blue-500 ring-2 ring-blue-300 scale-105'
+                        ? 'border-purple-500 ring-2 ring-purple-300 scale-105'
                         : 'border-transparent hover:scale-105'
                     }`}
                     style={{

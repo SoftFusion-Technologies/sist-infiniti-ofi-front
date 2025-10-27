@@ -248,7 +248,7 @@ const FormAltaRecaptacion = ({
 
                 {/* Usuarios filtrados por locales */}
                 <div className="mb-6 px-6 py-4 bg-white rounded-lg shadow-md">
-                  <div className="max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-blue-500 scrollbar-track-gray-200">
+                  <div className="max-h-64 overflow-y-auto scrollbar-thin scrollbar-thumb-purple-500 scrollbar-track-gray-200">
                     {Array.isArray(users) && users.length > 0 ? (
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                         {users.map((user) => (

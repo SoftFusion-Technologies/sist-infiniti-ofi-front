@@ -16,7 +16,7 @@ export default function DetalleContactoCell({ detalle, onShowDetalle }) {
   return (
     <span
       className={`inline-flex items-center gap-1 cursor-pointer text-xs md:text-sm font-semibold truncate max-w-[160px] ${
-        isTruncated ? 'text-blue-700 hover:underline' : 'text-gray-700'
+        isTruncated ? 'text-purple-700 hover:underline' : 'text-gray-700'
       }`}
       onClick={() => isTruncated && onShowDetalle(detalle)}
       tabIndex={isTruncated ? 0 : -1}

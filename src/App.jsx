@@ -27,7 +27,8 @@ import ColoresRutinaCrud from './Pages/MetodosGets/ColoresRutinaCrud.jsx';
 import PSEDashboard from './Pages/MetodosGets/PSEDashboard.jsx';
 import RMListWrapper from './Pages/MetodosGets/RM/RMListWrapper.jsx';
 import LogsGlobalAlumno from './Pages/MetodosGets/AlumnoPerfil/LogsGlobalAlumno.jsx';
-
+import RutinasExplorer from './Pages/MetodosGets/RutinasExplorer.jsx';
+import EstadisticasIns from './Pages/MetodosGets/EstadisticasIns.jsx';
 const AdminPage = lazy(() => import('./Pages/staff/AdminPage'));
 
 export default function App() {
@@ -180,6 +181,24 @@ export default function App() {
             <ProtectedRoute>
               {' '}
               <LogsGlobalAlumno />{' '}
+            </ProtectedRoute>
+          }
+        />{' '}
+        <Route
+          path="/dashboard/routines"
+          element={
+            <ProtectedRoute>
+              {' '}
+              <RutinasExplorer />{' '}
+            </ProtectedRoute>
+          }
+        />{' '}
+        <Route
+          path="/dashboard/estadisticas"
+          element={
+            <ProtectedRoute>
+              {' '}
+              <EstadisticasIns />{' '}
             </ProtectedRoute>
           }
         />{' '}

@@ -22,7 +22,7 @@ const EntranamientosAdaptan = () => {
       id: 'principiantes',
       nombre: 'Principiantes',
       icono: FaUsers,
-      color: 'from-blue-500 to-blue-700'
+      color: 'from-purple-500 to-purple-700'
     },
     {
       id: 'definicion',

@@ -69,7 +69,7 @@ function formatearDescripcionBloque(
                 <div className="flex gap-3">
                   <button
                     onClick={() => onVideoClick(clean)}
-                    className="text-blue-600 hover:underline text-xs font-semibold"
+                    className="text-purple-600 hover:underline text-xs font-semibold"
                   >
                     Ver video
                   </button>
@@ -544,7 +544,7 @@ function RutinasConDuracion({ studentId }) {
                   ([musculo, ejercicios]) => (
                     <div
                       key={musculo}
-                      className="rounded-2xl bg-white/90 p-7 shadow-lg border border-blue-100 mb-10"
+                      className="rounded-2xl bg-white/90 p-7 shadow-lg border border-purple-100 mb-10"
                     >
                       {(userLevel === 'admin' ||
                         userLevel === 'instructor') && (
@@ -562,7 +562,7 @@ function RutinasConDuracion({ studentId }) {
                       )}
 
                       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-5">
-                        <h3 className="font-extrabold text-2xl text-blue-700 tracking-tight">
+                        <h3 className="font-extrabold text-2xl text-purple-700 tracking-tight">
                           {musculo.toUpperCase()}
                         </h3>
                         {(userLevel === 'admin' ||
@@ -741,7 +741,7 @@ function RutinasConDuracion({ studentId }) {
                               <div className="flex flex-wrap gap-4 text-base font-medium text-gray-700 mt-2">
                                 {ej.series && (
                                   <span
-                                    className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-lg text-sm cursor-pointer hover:ring-2 ring-blue-200 transition"
+                                    className="inline-flex items-center gap-1 bg-purple-100 text-purple-700 px-3 py-1 rounded-lg text-sm cursor-pointer hover:ring-2 ring-purple-200 transition"
                                     onClick={() => handleOpenModal(ej)}
                                     title="Cargar registro de peso/reps"
                                   >

@@ -105,7 +105,7 @@ const NotificationsHelps = ({ instructorId }) => {
                       >
                         <div>
                           {index + 1} -{' '}
-                          <span className="font-medium text-blue-600">
+                          <span className="font-medium text-purple-600">
                             {solicitud.mensaje}
                           </span>
                         </div>
@@ -147,7 +147,7 @@ const NotificationsHelps = ({ instructorId }) => {
               </button>
               <button
                 onClick={() => setModalOpen(false)}
-                className="w-full bg-blue-600 text-white py-2 rounded-md shadow-md hover:bg-blue-700 transition"
+                className="w-full bg-purple-600 text-white py-2 rounded-md shadow-md hover:bg-purple-700 transition"
               >
                 Cerrar
               </button>

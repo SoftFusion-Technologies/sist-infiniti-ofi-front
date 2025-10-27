@@ -213,7 +213,7 @@ function PerfilAlumno() {
                       onClick={() => setModoFormulario('bloques')}
                       className={`flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium transition-all duration-200 ${
                         modoFormulario === 'bloques'
-                          ? 'bg-blue-600 text-white'
+                          ? 'bg-purple-600 text-white'
                           : 'bg-white text-gray-700 hover:bg-gray-100'
                       }`}
                     >
@@ -225,7 +225,7 @@ function PerfilAlumno() {
                       onClick={() => setModoFormulario('musculo')}
                       className={`flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium transition-all duration-200 ${
                         modoFormulario === 'musculo'
-                          ? 'bg-blue-600 text-white'
+                          ? 'bg-purple-600 text-white'
                           : 'bg-white text-gray-700 hover:bg-gray-100'
                       }`}
                     >
@@ -261,7 +261,7 @@ function PerfilAlumno() {
                     }}
                     icon={FaClipboardList}
                     label="Ver PSE"
-                    className="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-600 hover:to-blue-700"
+                    className="bg-gradient-to-r from-sky-500 to-purple-600 hover:from-sky-600 hover:to-purple-700"
                   />
 
                   <ActionButton
@@ -289,7 +289,7 @@ function PerfilAlumno() {
                 {/* Datos personales */}
                 <div className="space-y-4 text-gray-700 text-[1.05rem]">
                   <p className="flex items-center gap-2">
-                    <FaChalkboardTeacher className="text-blue-500 text-lg" />
+                    <FaChalkboardTeacher className="text-purple-500 text-lg" />
                     <span>
                       <span className="text-gray-500 font-semibold">
                         Profesor:
@@ -301,7 +301,7 @@ function PerfilAlumno() {
                     </span>
                   </p>
                   <p className="flex items-center gap-2">
-                    <FaPhone className="text-blue-500 text-lg" />
+                    <FaPhone className="text-purple-500 text-lg" />
                     <span>
                       <span className="text-gray-500 font-semibold">
                         Teléfono:
@@ -312,7 +312,7 @@ function PerfilAlumno() {
                     </span>
                   </p>
                   <p className="flex items-center gap-2">
-                    <FaIdCard className="text-blue-500 text-lg" />
+                    <FaIdCard className="text-purple-500 text-lg" />
                     <span>
                       <span className="text-gray-500 font-semibold">DNI:</span>{' '}
                       <span className="text-gray-800">
@@ -324,7 +324,7 @@ function PerfilAlumno() {
                     {alumno.rutina_tipo === 'personalizado' ? (
                       <FaUserCog className="text-orange-500 text-lg" />
                     ) : (
-                      <FaUsers className="text-blue-500 text-lg" />
+                      <FaUsers className="text-purple-500 text-lg" />
                     )}
                     <span>
                       <span className="text-gray-500 font-semibold">

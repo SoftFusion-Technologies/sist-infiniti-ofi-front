@@ -27,7 +27,7 @@ const AdminPage = () => {
         {/* Botón para recargar la página */}
         <button
           onClick={() => window.location.reload()}
-          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+          className="mt-4 px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition"
         >
           Recargar
         </button>
@@ -35,7 +35,7 @@ const AdminPage = () => {
         {/* Mensaje de contacto si el problema persiste */}
         <p className="text-sm text-gray-500 mt-2">
           Si el problema continúa, contacta a los administradores de{' '}
-          <span className="font-semibold text-blue-600">SoftFusion</span>.
+          <span className="font-semibold text-purple-600">SoftFusion</span>.
         </p>
       </div>
     );
@@ -129,6 +129,34 @@ const AdminPage = () => {
             >
               <Link to="/dashboard/alumnos">
                 <button className="btnstaff">Alumnos</button>
+              </Link>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 2.2 }}
+              className="relative overflow-visible bg-white font-bignoodle
+                 w-[250px] h-[100px] text-[20px]
+                 lg:w-[400px] lg:h-[150px] lg:text-[30px]
+                 mx-auto flex justify-center items-center
+                 rounded-tr-xl rounded-bl-xl"
+            >
+              <Link to="/dashboard/routines">
+                <button className="btnstaff">Rutinas</button>
+              </Link>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 2.3 }}
+              className="relative overflow-visible bg-white font-bignoodle
+                 w-[250px] h-[100px] text-[20px]
+                 lg:w-[400px] lg:h-[150px] lg:text-[30px]
+                 mx-auto flex justify-center items-center
+                 rounded-tr-xl rounded-bl-xl"
+            >
+              <Link to="/dashboard/estadisticas">
+                <button className="btnstaff">Estadísticas</button>
               </Link>
             </motion.div>
           </div>

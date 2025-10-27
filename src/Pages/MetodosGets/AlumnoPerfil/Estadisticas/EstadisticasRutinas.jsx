@@ -74,12 +74,12 @@ function EstadisticasAlumno({ studentId }) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <motion.div
             whileHover={{ scale: 1.03 }}
-            className="rounded-xl p-6 shadow-lg bg-white border border-blue-200"
+            className="rounded-xl p-6 shadow-lg bg-white border border-purple-200"
           >
             <p className="text-gray-600 text-sm mb-1 text-center">
               Rutinas Asignadas
             </p>
-            <p className="text-4xl font-bold text-blue-600 text-center">
+            <p className="text-4xl font-bold text-purple-600 text-center">
               {rutinas.total_rutinas_cargadas}
             </p>
           </motion.div>
@@ -155,7 +155,7 @@ function EstadisticasAlumno({ studentId }) {
             <div className="mt-6 flex justify-center">
               <button
                 onClick={() => setShowAll(!showAll)}
-                className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md shadow transition"
+                className="px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-md shadow transition"
               >
                 {showAll ? 'Ver menos' : 'Ver más'}
               </button>

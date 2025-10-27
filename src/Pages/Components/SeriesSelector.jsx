@@ -36,7 +36,7 @@ export default function SeriesSelector({
               className={[
                 'h-9 min-w-9 px-3 rounded-xl text-sm font-semibold border transition',
                 active
-                  ? 'bg-blue-600 text-white border-blue-600 shadow-sm'
+                  ? 'bg-purple-600 text-white border-purple-600 shadow-sm'
                   : 'bg-white hover:bg-orange-50 border-gray-300'
               ].join(' ')}
               aria-pressed={active}

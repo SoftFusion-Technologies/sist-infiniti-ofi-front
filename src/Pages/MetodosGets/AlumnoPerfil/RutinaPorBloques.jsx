@@ -1077,7 +1077,7 @@ const RutinaPorBloques = ({ studentId, actualizar }) => {
                 return (
                   <motion.li
                     key={serie.id}
-                    className="rounded-xl border border-blue-300 bg-gray-50 p-3 shadow-sm"
+                    className="rounded-xl border border-purple-300 bg-gray-50 p-3 shadow-sm"
                     variants={itemVariants}
                     layout
                   >
@@ -1114,7 +1114,7 @@ const RutinaPorBloques = ({ studentId, actualizar }) => {
 
                     <div className="mt-3 flex items-center gap-2">
                       <button
-                        className="text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold active:scale-[.98]"
+                        className="text-xs px-3 py-1.5 rounded-lg bg-purple-600 text-white font-semibold active:scale-[.98]"
                         onClick={() => openLogModal(ej, serie)}
                       >
                         Registrar PESO
@@ -1140,7 +1140,7 @@ const RutinaPorBloques = ({ studentId, actualizar }) => {
                       <div className="mt-2 flex items-center gap-3 text-[13px]">
                         <button
                           onClick={() => onEditarSerie(serie)}
-                          className="text-blue-600 hover:text-blue-800"
+                          className="text-purple-600 hover:text-purple-800"
                         >
                           Editar
                         </button>
@@ -1215,7 +1215,7 @@ const RutinaPorBloques = ({ studentId, actualizar }) => {
                     a.danger
                       ? 'text-red-600'
                       : a.primary
-                      ? 'text-blue-700'
+                      ? 'text-purple-700'
                       : 'text-gray-800'
                   } hover:bg-gray-50`}
                   onClick={() => {
@@ -1289,8 +1289,8 @@ const RutinaPorBloques = ({ studentId, actualizar }) => {
         <li className="rounded-2xl border border-gray-200 bg-white px-4 py-3 shadow-sm hover:shadow-md transition-shadow active:scale-[.995]">
           <div className="flex items-start gap-3">
             {/* Monograma (usar sm, no xs) */}
-            <div className="mt-0.5 hidden sm:flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blue-50 border border-blue-100">
-              <span className="text-xs font-extrabold text-blue-700 uppercase">
+            <div className="mt-0.5 hidden sm:flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-purple-50 border border-purple-100">
+              <span className="text-xs font-extrabold text-purple-700 uppercase">
                 {(ej.nombre || 'E')[0]}
               </span>
             </div>
@@ -1311,7 +1311,7 @@ const RutinaPorBloques = ({ studentId, actualizar }) => {
                     <div className="hidden sm:flex items-center gap-1">
                       <button
                         onClick={() => onEditarEjercicio(ej)}
-                        className="h-9 w-9 grid place-content-center rounded-lg text-blue-600 hover:text-blue-800 hover:bg-blue-50 transition"
+                        className="h-9 w-9 grid place-content-center rounded-lg text-purple-600 hover:text-purple-800 hover:bg-purple-50 transition"
                         title="Editar ejercicio"
                         aria-label="Editar ejercicio"
                       >
@@ -1353,7 +1353,7 @@ const RutinaPorBloques = ({ studentId, actualizar }) => {
 
               {/* Chips */}
               <div className="mt-2 flex flex-wrap items-center gap-2">
-                <span className="text-[11px] px-2 py-1 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
+                <span className="text-[11px] px-2 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
                   {totalSeries} series
                 </span>
                 {first && (
@@ -1682,12 +1682,12 @@ const RutinaPorBloques = ({ studentId, actualizar }) => {
           {rutinas.map((rutina) => (
             <article
               key={rutina.id}
-              className="snap-start bg-white/95 rounded-2xl shadow-xl border border-blue-100 p-4"
+              className="snap-start bg-white/95 rounded-2xl shadow-xl border border-purple-100 p-4"
             >
               {/* Header compacta de rutina */}
               <header className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-blue-600/10 grid place-content-center">
-                  <span className="text-sm font-bold text-blue-700">RX</span>
+                <div className="h-10 w-10 rounded-xl bg-purple-600/10 grid place-content-center">
+                  <span className="text-sm font-bold text-purple-700">RX</span>
                 </div>
                 <div className="flex-1">
                   <h3 className="font-extrabold text-lg text-gray-800 leading-tight">
@@ -1703,7 +1703,7 @@ const RutinaPorBloques = ({ studentId, actualizar }) => {
                 {/* Acción sRPE (solo alumno) */}
                 {isAlumno && (
                   <button
-                    className="text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white font-semibold active:scale-[.98]"
+                    className="text-xs px-3 py-1.5 rounded-lg bg-purple-600 text-white font-semibold active:scale-[.98]"
                     onClick={() => {
                       setPseMode('sesion');
                       setPseCtx({

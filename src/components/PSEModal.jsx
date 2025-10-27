@@ -145,7 +145,7 @@ const handleSubmit = async (e) => {
             >
               <div className="px-5 py-4 border-b flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <FaTachometerAlt className="text-blue-600" />
+                  <FaTachometerAlt className="text-purple-600" />
                   <h3 className="font-extrabold text-lg">{titulo}</h3>
                 </div>
                 <button
@@ -259,7 +259,7 @@ const handleSubmit = async (e) => {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-60"
+                    className="px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-60"
                     disabled={saving}
                   >
                     {saving ? 'Guardando…' : 'Guardar'}

@@ -70,7 +70,7 @@ const FeedbackList = ({ instructorId, studentId }) => {
     <>
       <NavbarStaff />
       <ParticlesBackground />
-      <main className="bg-gradient-to-b from-blue-950 via-blue-900 to-blue-800 min-h-screen py-12 px-4 sm:px-8 md:px-12">
+      <main className="bg-gradient-to-b from-purple-950 via-purple-900 to-purple-800 min-h-screen py-12 px-4 sm:px-8 md:px-12">
         <ButtonBack></ButtonBack>
         <div className="max-w-7xl mx-auto flex flex-col items-center">
           <h2 className="text-3xl titulo uppercase font-extrabold text-white mb-12 tracking-wide text-center">
@@ -96,7 +96,7 @@ const FeedbackList = ({ instructorId, studentId }) => {
                     Fecha Rutina:{' '}
                     {new Date(fb.rutina.fecha).toLocaleDateString()}
                   </time>
-                  <h3 className="uppercase mt-5 text-2xl font-semibold text-blue-900 truncate">
+                  <h3 className="uppercase mt-5 text-2xl font-semibold text-purple-900 truncate">
                     Opinión
                   </h3>
                 </header>
@@ -130,7 +130,7 @@ const FeedbackList = ({ instructorId, studentId }) => {
                 <section className="mt-4">
                   <button
                     onClick={() => setShowExercises(!showExercises)}
-                    className="text-blue-700 hover:underline font-semibold text-sm mb-2"
+                    className="text-purple-700 hover:underline font-semibold text-sm mb-2"
                   >
                     {showExercises ? 'Ocultar ejercicios' : 'Ver ejercicios'}
                   </button>
@@ -141,7 +141,7 @@ const FeedbackList = ({ instructorId, studentId }) => {
                         {fb.rutina.exercises.length > 0 ? (
                           fb.rutina.exercises.map((ex) => (
                             <li key={ex.id}>
-                              <span className="font-semibold text-blue-900">
+                              <span className="font-semibold text-purple-900">
                                 {ex.musculo}:
                               </span>{' '}
                               {ex.descripcion

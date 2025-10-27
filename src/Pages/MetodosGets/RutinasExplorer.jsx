@@ -16,8 +16,8 @@ import {
   Eye,
   UserPlus
 } from 'lucide-react';
-import ParticlesBackground from '../../Components/ParticlesBackground';
-import ButtonBack from '../../Components/ButtonBack';
+import ParticlesBackground from '../../components/ParticlesBackground';
+import ButtonBack from '../../components/ButtonBack';
 import {
   FaTimes,
   FaSearch,
@@ -78,7 +78,7 @@ export const Toolbar = React.memo(function Toolbar({
         <div className={`${glass} ${panel} px-3 sm:px-5 py-3`}>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <div className="flex items-center gap-2 mr-auto">
-              <ButtonBack />
+              {/* <ButtonBack /> */}
               <h2 className="text-lg sm:text-xl font-semibold flex items-center gap-2 text-white uppercase tracking-wide">
                 <Users className="w-5 h-5 opacity-80" />
                 Rutinas
@@ -172,9 +172,9 @@ export const Toolbar = React.memo(function Toolbar({
                     title={u.email}
                   >
                     <span className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white/10 text-white text-xs font-semibold">
-                      {initials(u.name)}
+                      {initials(u.nombre)}
                     </span>
-                    <span className="text-sm font-medium">{u.name}</span>
+                    <span className="text-sm font-medium">{u.nombre}</span>
                   </button>
                 ))}
             </div>
@@ -314,7 +314,7 @@ export default function RutinasExplorer() {
         const json = await fetchJSON(`${BASE_URL}/users`);
         const allowed = new Set(['instructor', 'admin']); // ajustable
         setUsers(
-          (Array.isArray(json) ? json : []).filter((u) => allowed.has(u.level))
+          (Array.isArray(json) ? json : []).filter((u) => allowed.has(u.rol))
         );
       } catch (e) {
         setErrorUsers(e.message || 'Error al cargar usuarios');
@@ -478,7 +478,7 @@ export default function RutinasExplorer() {
           'border border-gray-200 hover:shadow-[0_18px_50px_rgba(2,6,23,0.10)]',
           'after:pointer-events-none after:absolute after:inset-0 after:rounded-2xl',
           'after:opacity-0 hover:after:opacity-100 after:transition-opacity',
-          'after:ring-1 after:ring-inset after:ring-blue-200/60'
+          'after:ring-1 after:ring-inset after:ring-purple-200/60'
         ].join(' ')}
       >
         <div className="p-4 sm:p-5">
@@ -493,7 +493,7 @@ export default function RutinasExplorer() {
               <div className="mt-2 text-sm text-gray-600 flex flex-wrap items-center gap-x-4 gap-y-1">
                 <span className="inline-flex items-center gap-1.5">
                   <UserRoundCheck className="w-4 h-4 text-gray-400" />
-                  {r.instructor?.name || r.instructor?.nombre || '—'}
+                  {r.instructor?.nombre || r.instructor?.nombre || '—'}
                 </span>
                 <span className="inline-flex items-center gap-1.5">
                   <Users className="w-4 h-4 text-gray-400" />
@@ -515,8 +515,8 @@ export default function RutinasExplorer() {
               <button
                 onClick={() => openAsignarDesdeRutina(r)}
                 className="inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 w-full sm:w-auto
-             bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white
-             border border-blue-700 shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"
+             bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white
+             border border-purple-700 shadow-sm focus:outline-none focus-visible:ring-4 focus-visible:ring-purple-200"
                 title="Asignar rutina"
                 aria-label="Asignar rutina"
               >
@@ -591,7 +591,7 @@ export default function RutinasExplorer() {
             <div className="px-4 sm:px-6 py-3 text-sm text-white/80 flex flex-wrap gap-x-4 gap-y-1 border-b border-white/10">
               <span className="inline-flex items-center gap-1">
                 <UserRoundCheck className="w-4 h-4" />{' '}
-                {detalle?.instructor?.name ||
+                {detalle?.instructor?.nombre ||
                   detalle?.instructor?.nombre ||
                   '—'}
               </span>
@@ -732,7 +732,7 @@ export default function RutinasExplorer() {
   );
 
   return (
-    <div className="min-h-[100dvh] bg-gradient-to-b from-blue-950 via-blue-900 to-blue-800">
+    <div className="min-h-[100dvh] bg-gradient-to-b from-purple-950 via-purple-900 to-purple-800">
       <ParticlesBackground />
 
       <Toolbar
@@ -867,7 +867,7 @@ export default function RutinasExplorer() {
                     setBusquedaAlumnos(e.target.value);
                     setPaginaAlumnos(1);
                   }}
-                  className="w-full border border-gray-300 rounded-xl px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                  className="w-full border border-gray-300 rounded-xl px-4 py-2 pr-10 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
                 />
                 <FaSearch className="absolute right-3 top-2.5 text-gray-400" />
               </div>
@@ -884,7 +884,7 @@ export default function RutinasExplorer() {
                     <div
                       className={clsx(
                         'relative flex items-center rounded-xl border bg-white transition',
-                        'focus-within:ring-2 focus-within:ring-blue-300',
+                        'focus-within:ring-2 focus-within:ring-purple-300',
                         isRangoInvalido
                           ? 'border-red-300 ring-red-200'
                           : 'border-gray-300'
@@ -914,7 +914,7 @@ export default function RutinasExplorer() {
                     <div
                       className={clsx(
                         'relative flex items-center rounded-xl border bg-white transition',
-                        'focus-within:ring-2 focus-within:ring-blue-300',
+                        'focus-within:ring-2 focus-within:ring-purple-300',
                         isRangoInvalido
                           ? 'border-red-300 ring-red-200'
                           : 'border-gray-300'
@@ -977,7 +977,7 @@ export default function RutinasExplorer() {
                   <button
                     type="button"
                     onClick={() => setHasta('')}
-                    className="text-[12px] inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700"
+                    className="text-[12px] inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-purple-200 bg-purple-50 hover:bg-purple-100 text-purple-700"
                   >
                     <FaBan className="w-3 h-3" /> Indefinida
                   </button>
@@ -1008,7 +1008,7 @@ export default function RutinasExplorer() {
                         className={clsx(
                           'flex items-center gap-3 px-4 py-2 rounded-lg cursor-pointer transition-all border',
                           selected
-                            ? 'bg-blue-50 border-blue-300 text-blue-800'
+                            ? 'bg-purple-50 border-purple-300 text-purple-800'
                             : 'hover:bg-gray-100 border-transparent text-gray-700'
                         )}
                       >
@@ -1027,7 +1027,7 @@ export default function RutinasExplorer() {
                               );
                             }
                           }}
-                          className="h-4 w-4 text-blue-600 border-gray-300 rounded"
+                          className="h-4 w-4 text-purple-600 border-gray-300 rounded"
                         />
                         <span className="text-sm font-medium">
                           {alumno.nomyape}{' '}
@@ -1044,7 +1044,7 @@ export default function RutinasExplorer() {
                 <div className="text-center mb-4">
                   <button
                     onClick={() => setPaginaAlumnos((prev) => prev + 1)}
-                    className="text-blue-700 text-sm font-semibold hover:underline"
+                    className="text-purple-700 text-sm font-semibold hover:underline"
                   >
                     Ver más alumnos
                   </button>
@@ -1058,7 +1058,7 @@ export default function RutinasExplorer() {
                 onClick={handleAsignarRutinaCompleta}
                 disabled={cargandoAsignacion || isRangoInvalido}
                 className={clsx(
-                  'w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white',
+                  'w-full bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white',
                   'px-4 py-3 rounded-xl font-semibold text-lg shadow-md transition',
                   'disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2'
                 )}

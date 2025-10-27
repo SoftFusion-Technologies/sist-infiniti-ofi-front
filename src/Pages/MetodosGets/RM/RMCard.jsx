@@ -52,7 +52,7 @@ const getColorPorNivel = (nivel) => {
     case 'Novato':
       return 'bg-gray-200 text-gray-800';
     case 'Intermedio':
-      return 'bg-blue-200 text-blue-800';
+      return 'bg-purple-200 text-purple-800';
     case 'Avanzado':
       return 'bg-yellow-200 text-yellow-800';
     case 'Élite':

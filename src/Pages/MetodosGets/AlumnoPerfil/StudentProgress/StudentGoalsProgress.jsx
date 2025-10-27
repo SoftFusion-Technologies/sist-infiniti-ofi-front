@@ -63,7 +63,7 @@ export default function StudentGoalsProgress({ studentId }) {
               <h3 className="text-lg font-semibold">
                 Objetivo - {goal.mes}/{goal.anio}
               </h3>
-              <button className="text-blue-600 hover:underline">
+              <button className="text-purple-600 hover:underline">
                 {isExpanded ? 'Ocultar' : 'Ver más'}
               </button>
             </header>
@@ -121,7 +121,7 @@ export default function StudentGoalsProgress({ studentId }) {
                       </div>
 
                       <details className="mt-2">
-                        <summary className="cursor-pointer text-blue-600 hover:underline">
+                        <summary className="cursor-pointer text-purple-600 hover:underline">
                           Ver ejercicios y solicitudes
                         </summary>
                         <ul className="mt-2 space-y-2">

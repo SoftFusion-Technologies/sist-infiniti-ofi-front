@@ -59,8 +59,8 @@ function ProgresoCard({ progreso }) {
     }
   };
   return (
-    <div className="min-w-[200px] max-w-[250px] border border-blue-400 rounded-lg p-4 bg-blue-50 shadow-sm flex-shrink-0">
-      <p className="font-semibold text-blue-700 mb-3">{fechaFormateada}</p>
+    <div className="min-w-[200px] max-w-[250px] border border-purple-400 rounded-lg p-4 bg-purple-50 shadow-sm flex-shrink-0">
+      <p className="font-semibold text-purple-700 mb-3">{fechaFormateada}</p>
 
       <p className="flex justify-between items-center gap-2">
         <span className="font-semibold">Peso:</span>{' '}
@@ -147,7 +147,7 @@ function ProgresoCard({ progreso }) {
         {!editMode ? (
           <button
             onClick={() => setEditMode(true)}
-            className="text-blue-600 text-sm hover:underline"
+            className="text-purple-600 text-sm hover:underline"
           >
             Editar
           </button>
@@ -240,8 +240,8 @@ export default function CardProgreso({ studentId }) {
     return <p>No hay progresos para mostrar.</p>;
 
   return (
-    <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg p-6 border border-blue-700/30">
-      <h2 className="text-2xl font-semibold text-blue-700 mb-4 border-b border-blue-700/40 pb-2">
+    <div className="max-w-5xl mx-auto bg-white rounded-xl shadow-lg p-6 border border-purple-700/30">
+      <h2 className="text-2xl font-semibold text-purple-700 mb-4 border-b border-purple-700/40 pb-2">
         Listado de Progreso
         {/* - Objetivo: {objetivo} */}
         {/* ({estadoObjetivo}) */}
@@ -257,18 +257,18 @@ export default function CardProgreso({ studentId }) {
         ))}
       </div>
 
-      <hr className="my-6 border-blue-700/30" />
+      <hr className="my-6 border-purple-700/30" />
 
       {/* Resumen mensual */}
       <div className="space-y-3 text-gray-800 text-sm">
         <p>
-          <span className="font-semibold text-blue-700">
+          <span className="font-semibold text-purple-700">
             Total progresos en el mes:
           </span>{' '}
           {totalProgresosEnMes}
         </p>
         <p>
-          <span className="font-semibold text-blue-700">
+          <span className="font-semibold text-purple-700">
             Diferencia de peso:
           </span>{' '}
           <span
@@ -285,13 +285,13 @@ export default function CardProgreso({ studentId }) {
           </span>
         </p>
         <p>
-          <span className="font-semibold text-blue-700">
+          <span className="font-semibold text-purple-700">
             Cumplió objetivo peso:
           </span>{' '}
           {cumplioObjetivoPeso ? 'Sí' : 'No'}
         </p>
         <p>
-          <span className="font-semibold text-blue-700">
+          <span className="font-semibold text-purple-700">
             Peso restante para objetivo:
           </span>{' '}
           {pesoRestanteParaObjetivo} kg
@@ -320,7 +320,7 @@ export default function CardProgreso({ studentId }) {
           </div>
         ) : (
           <p>
-            <span className="font-semibold text-blue-700">
+            <span className="font-semibold text-purple-700">
               Cumplió objetivo peso:
             </span>{' '}
             No

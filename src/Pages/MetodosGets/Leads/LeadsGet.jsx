@@ -396,7 +396,7 @@ const LeadsGet = () => {
                               className={`table-action-btn ${
                                 personClass.movido_a_ventas
                                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                  : 'bg-blue-700 hover:bg-blue-800 text-white'
+                                  : 'bg-purple-700 hover:bg-purple-800 text-white'
                               }`}
                             >
                               {personClass.movido_a_ventas

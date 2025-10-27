@@ -175,7 +175,7 @@ export default function LogPesoModal({
           </button>
 
           {/* Título */}
-          <h2 className="text-2xl font-bold mb-1 text-blue-700">
+          <h2 className="text-2xl font-bold mb-1 text-purple-700">
             {ejercicio?.nombre || 'Ejercicio'}
             {serie?.numero_serie ? ` — Serie ${serie.numero_serie}` : ''}
           </h2>
@@ -194,28 +194,28 @@ export default function LogPesoModal({
           {/* Historial (edición rápida) */}
           {logs?.length > 0 && (
             <div className="mb-4">
-              <div className="text-xs font-bold text-blue-600 mb-1">
+              <div className="text-xs font-bold text-purple-600 mb-1">
                 Historial:
               </div>
               <div className="flex flex-wrap gap-2">
                 {logs.slice(0, 3).map((l) => (
                   <div
                     key={l.id}
-                    className={`flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-2 py-1 shadow-sm ${
-                      editLogId === l.id ? 'ring-2 ring-blue-400' : ''
+                    className={`flex items-center gap-2 bg-purple-50 border border-purple-200 rounded-lg px-2 py-1 shadow-sm ${
+                      editLogId === l.id ? 'ring-2 ring-purple-400' : ''
                     }`}
                   >
                     <div className="flex flex-col leading-4">
                       <span className="text-[12px] text-gray-700">
                         {l.fecha}
                       </span>
-                      <span className="text-[15px] font-bold text-blue-800">
+                      <span className="text-[15px] font-bold text-purple-800">
                         {l.peso} kg
                       </span>
                     </div>
                     <button
                       onClick={() => editarLog(l)}
-                      className="text-blue-500 hover:text-blue-700"
+                      className="text-purple-500 hover:text-purple-700"
                       title="Editar"
                       disabled={loading}
                     >
@@ -245,7 +245,7 @@ export default function LogPesoModal({
               step={0.01}
               ref={inputRef}
               disabled={loading}
-              className="w-full px-4 py-2 rounded-xl border border-blue-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-200 bg-blue-50 text-lg"
+              className="w-full px-4 py-2 rounded-xl border border-purple-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-200 bg-purple-50 text-lg"
               placeholder="Peso (kg)"
               value={peso}
               onChange={(e) => setPeso(e.target.value)}
@@ -267,7 +267,7 @@ export default function LogPesoModal({
               className={`flex-1 py-2 rounded-xl text-lg font-bold transition ${
                 loading
                   ? 'bg-gray-400'
-                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  : 'bg-purple-600 hover:bg-purple-700 text-white'
               }`}
               onClick={handleGuardar}
               disabled={loading || !serie?.id || !ejercicio?.student_id}
