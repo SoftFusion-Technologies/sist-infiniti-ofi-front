@@ -33,7 +33,7 @@ const AlumnosGet = () => {
   const { userId, userLevel } = useAuth();
   const navigate = useNavigate();
 
-  console.log(userId);
+  // console.log(userId);
   const abrirModal = () => {
     setModalNewAlumno(true);
   };
@@ -518,7 +518,7 @@ const AlumnosGet = () => {
         </div>
       </div>
 
-      <NotificationsHelps instructorId={userId} />
+      {/* <NotificationsHelps instructorId={userId} /> */}
     </>
   );
 };

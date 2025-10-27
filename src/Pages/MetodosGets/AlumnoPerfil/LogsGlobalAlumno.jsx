@@ -14,9 +14,10 @@ import {
   FiActivity,
   FiHash
 } from 'react-icons/fi';
-import Navbar from '../../../Components/Header/NavBar/NavBar';
+// import Navbar from '../../../components/Header/NavBar/NavBar';
 import NavbarStaff from '../../staff/NavbarStaff';
 import { formatDdMmYyyySmart } from '../../../utils/fechas';
+import ParticlesBackground from '../../../components/ParticlesBackground';
 
 const API = 'http://localhost:8080';
 
@@ -150,12 +151,13 @@ export default function LogsGlobalAlumno() {
   return (
     <>
       <NavbarStaff></NavbarStaff>
-      <div className="min-h-screen bg-blue-600">
+      <div className="min-h-screen pt-10 pb-10 bg-[radial-gradient(ellipse_at_top,rgba(2,6,23,1),rgba(2,6,23,1))]">
         {/* Decor superior */}
         <div className="relative">
           <div className="absolute -top-24 right-10 w-64 h-64 rounded-full bg-white/10 blur-2xl" />
           <div className="absolute -top-10 left-[-40px] w-48 h-48 rounded-full bg-white/10 blur-2xl" />
         </div>
+        <ParticlesBackground></ParticlesBackground>
 
         <div ref={topRef} className="max-w-6xl mx-auto px-4 sm:px-6 pb-10">
           {/* Header */}

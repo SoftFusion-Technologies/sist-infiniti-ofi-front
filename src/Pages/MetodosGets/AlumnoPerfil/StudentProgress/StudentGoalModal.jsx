@@ -13,18 +13,18 @@ const StudentGoalModal = ({ studentId, onGoalCreated }) => {
   const [grasaCorporal, setGrasaCorporal] = useState('');
   const [cinturaCm, setCinturaCm] = useState('');
   const [imc, setImc] = useState('');
-  const [controlAntropometrico, setControlAntropometrico] = useState(null);
   const [esRedefinicion, setEsRedefinicion] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
 
+  // Ahora son 6 pasos (sin control antropométrico)
   const [step, setStep] = useState(1);
 
   const { nomyape } = useAuth();
-
   const URL = 'http://localhost:8080';
 
+  // Carga inicial: objetivo actual o valores previos
   useEffect(() => {
     if (!studentId) return;
 
@@ -41,17 +41,16 @@ const StudentGoalModal = ({ studentId, onGoalCreated }) => {
 
         if (res.data && res.data.length > 0) {
           const currentGoal = res.data[0];
-          setEsRedefinicion(true); // ✅ redefinición del objetivo actual
+          setEsRedefinicion(true);
           setGoal(currentGoal.objetivo || '');
           setAlturaCm(currentGoal.altura_cm || '');
           setPesoKg(currentGoal.peso_kg || '');
           setEdad(currentGoal.edad || '');
           setGrasaCorporal(currentGoal.grasa_corporal || '');
           setCinturaCm(currentGoal.cintura_cm || '');
-          setControlAntropometrico(currentGoal.control_antropometrico || null);
           setModalOpen(false);
         } else {
-          // no hay datos actuales → buscar anterior
+          // Buscar el mes anterior
           let prevMonth = month - 1;
           let prevYear = year;
           if (prevMonth === 0) {
@@ -65,23 +64,21 @@ const StudentGoalModal = ({ studentId, onGoalCreated }) => {
 
           if (res.data && res.data.length > 0) {
             const prevGoal = res.data[0];
-            setEsRedefinicion(false); // ✅ nuevo objetivo
+            setEsRedefinicion(false);
             setGoal('');
             setAlturaCm(prevGoal.altura_cm || '');
             setPesoKg(prevGoal.peso_kg || '');
             setEdad(prevGoal.edad || '');
             setGrasaCorporal(prevGoal.grasa_corporal || '');
             setCinturaCm(prevGoal.cintura_cm || '');
-            setControlAntropometrico(prevGoal.control_antropometrico || null);
           } else {
-            setEsRedefinicion(false); // ✅ nuevo objetivo sin datos previos
+            setEsRedefinicion(false);
             setGoal('');
             setAlturaCm('');
             setPesoKg('');
             setEdad('');
             setGrasaCorporal('');
             setCinturaCm('');
-            setControlAntropometrico(null);
           }
 
           setModalOpen(true);
@@ -96,16 +93,18 @@ const StudentGoalModal = ({ studentId, onGoalCreated }) => {
     fetchGoal();
   }, [studentId]);
 
+  // Cálculo IMC y grasa estimada
   useEffect(() => {
     if (pesoKg && alturaCm && edad) {
       const alturaEnMetros = alturaCm / 100;
-      const imc = pesoKg / (alturaEnMetros * alturaEnMetros);
-      setImc(imc.toFixed(2)); // si quieres mostrarlo también
-      const grasa = (1.2 * imc + 0.23 * edad - 5.4).toFixed(2);
+      const _imc = pesoKg / (alturaEnMetros * alturaEnMetros);
+      setImc(_imc.toFixed(2));
+      const grasa = (1.2 * _imc + 0.23 * edad - 5.4).toFixed(2);
       setGrasaCorporal(grasa);
     }
   }, [pesoKg, alturaCm, edad]);
 
+  // Abrir modal si no hay objetivo del mes
   useEffect(() => {
     if (!studentId) return;
 
@@ -116,9 +115,6 @@ const StudentGoalModal = ({ studentId, onGoalCreated }) => {
         const month = now.getMonth() + 1;
         const year = now.getFullYear();
 
-        console.log(month);
-
-        console.log(month);
         const res = await axios.get(
           `${URL}/student-monthly-goals?student_id=${studentId}&mes=${month}&anio=${year}`
         );
@@ -154,18 +150,15 @@ const StudentGoalModal = ({ studentId, onGoalCreated }) => {
         altura_cm: alturaCm || null,
         peso_kg: pesoKg || null,
         edad: edad || null,
-        control_antropometrico: controlAntropometrico || null,
         grasa_corporal: grasaCorporal || null,
         cintura_cm: cinturaCm || null
+        // ❌ Se eliminó control_antropometrico del payload
       });
 
       setModalOpen(false);
       setGoal('');
 
-      if (onGoalCreated) {
-        onGoalCreated(); // dispara la recarga
-      }
-
+      onGoalCreated && onGoalCreated();
       alert('Objetivo guardado correctamente.');
     } catch (error) {
       console.error('Error al guardar objetivo mensual:', error);
@@ -175,45 +168,27 @@ const StudentGoalModal = ({ studentId, onGoalCreated }) => {
     }
   };
 
-  const calcularGrasaBasadaEnIMC = (imc) => {
-    return (1.39 * imc).toFixed(2); // Estimación simple sin sexo ni edad
-  };
-
+  // Textos adaptados a 6 pasos (sin control antropométrico)
   const mensajes = {
     nuevo: {
       1: '¡Hola {nomyape}! Empecemos por definir tu objetivo para este mes. ¿Qué te gustaría lograr?',
       2: '{nomyape}, contanos cuál es tu altura en centímetros para personalizar tu plan.',
       3: 'Perfecto, {nomyape}. Ahora ingresá tu peso actual en kilogramos.',
       4: 'Gracias, {nomyape}. ¿Cuál es tu edad?',
-      5: '{nomyape}, ¿te gustaría realizar un control antropométrico? Esto nos ayuda a conocer mejor tu composición corporal.',
-      6: 'Por último, {nomyape}, ingresá el valor de tu cintura en centímetros (opcional).',
-      7: '¡Listo {nomyape}! Este es el resumen con toda la información que cargaste. ¡Gran trabajo!'
+      5: '{nomyape}, ingresá tu medida de cintura en centímetros (opcional).',
+      6: '¡Listo {nomyape}! Este es el resumen con toda la información que cargaste. ¡Gran trabajo!'
     },
     redefinir: {
       1: 'Hola de nuevo {nomyape}, ¿querés actualizar tu objetivo mensual?',
       2: '{nomyape}, podés modificar tu altura si cambió o continuar igual.',
       3: '{nomyape}, ¿querés actualizar tu peso actual en kilogramos?',
       4: '¿Tu edad sigue siendo la misma, {nomyape}?',
-      5: '{nomyape}, ¿querés repetir el control antropométrico o usar el anterior?',
-      6: '{nomyape}, si cambió tu cintura podés actualizar el valor en centímetros.',
-      7: 'Perfecto {nomyape}, actualizamos tu información. ¡Vamos por más!'
+      5: '{nomyape}, si cambió tu cintura podés actualizar el valor en centímetros (opcional).',
+      6: 'Perfecto {nomyape}, actualizamos tu información. ¡Vamos por más!'
     }
   };
 
-  function getMensaje(id, datos, esRedefinicion = false) {
-    const tipo = esRedefinicion ? 'redefinir' : 'nuevo';
-    let mensaje = mensajes[tipo][id] || '';
-
-    Object.keys(datos).forEach((key) => {
-      const regex = new RegExp(`{${key}}`, 'g');
-      mensaje = mensaje.replace(regex, datos[key]);
-    });
-
-    return mensaje;
-  }
-
-  const primerNombre = nomyape.split(' ')[0];
-
+  const primerNombre = (nomyape || '').split(' ')[0];
   const mensajeActual = mensajes[esRedefinicion ? 'redefinir' : 'nuevo'][step];
 
   if (loading) return null;
@@ -244,17 +219,18 @@ const StudentGoalModal = ({ studentId, onGoalCreated }) => {
                   dangerouslySetInnerHTML={{
                     __html: mensajeActual.replace(
                       '{nomyape}',
-                      `<span class="text-blue-700">${primerNombre}</span>`
+                      `<span class="text-purple-700">${primerNombre}</span>`
                     )
                   }}
                 />
               )}
             </AnimatePresence>
+
             <div className="max-w-xl mx-auto">
-              {/* Barra de progreso */}
+              {/* Barra de progreso (6 pasos) */}
               <div className="w-full bg-gray-200 h-3 rounded-full overflow-hidden mb-6">
                 <div
-                  className="bg-blue-500 h-full transition-all duration-300"
+                  className="bg-purple-500 h-full transition-all duration-300"
                   style={{ width: `${(step / 6) * 100}%` }}
                 />
               </div>
@@ -276,7 +252,7 @@ const StudentGoalModal = ({ studentId, onGoalCreated }) => {
                         <textarea
                           value={goal}
                           onChange={(e) => setGoal(e.target.value)}
-                          placeholder="Define un objetivo claro y alcanzable para este mes que ayudará a mantener el foco y medir tus avances. Por ejemplo: 'Perder 3 kilos', 'Correr 5 km tres veces por semana' o 'Mejorar mi alimentación.'"
+                          placeholder="Define un objetivo claro y medible para este mes (p. ej., 'Perder 3 kg', 'Correr 5km 3 veces por semana')."
                           rows={3}
                           className="w-full border border-gray-300 rounded-lg p-4"
                           required
@@ -323,36 +299,13 @@ const StudentGoalModal = ({ studentId, onGoalCreated }) => {
                       </div>
                     )}
 
+                    {/* Paso 5: Cintura (opcional) */}
                     {step === 5 && (
-                      <div className="mb-4 space-y-2">
-                        <label className="block text-sm font-medium">
-                          ¿Control antropométrico?
-                        </label>
-                        <p className="text-sm text-gray-600">
-                          El control antropométrico evalúa medidas corporales
-                          como peso, altura, IMC y circunferencia de cintura
-                          para conocer tu composición corporal.
-                        </p>
-                        <select
-                          value={controlAntropometrico}
-                          onChange={(e) =>
-                            setControlAntropometrico(e.target.value)
-                          }
-                          className="w-full border p-2 rounded"
-                        >
-                          <option value="">Seleccionar</option>
-                          <option value="SI">Sí</option>
-                          <option value="NO">No</option>
-                        </select>
-                      </div>
-                    )}
-
-                    {step === 6 && (
                       <div className="mb-4 space-y-2">
                         <input
                           type="number"
                           step="0.01"
-                          placeholder="Cintura (cm)"
+                          placeholder="Cintura (cm) — opcional"
                           value={cinturaCm}
                           onChange={(e) => setCinturaCm(e.target.value)}
                           className="w-full border p-2 rounded"
@@ -361,7 +314,7 @@ const StudentGoalModal = ({ studentId, onGoalCreated }) => {
                           type="button"
                           onClick={() => {
                             setCinturaCm(null);
-                            setStep(7);
+                            setStep(6);
                           }}
                           className="w-full py-2 rounded-lg bg-yellow-400 hover:bg-yellow-500 text-black font-semibold transition"
                         >
@@ -370,7 +323,8 @@ const StudentGoalModal = ({ studentId, onGoalCreated }) => {
                       </div>
                     )}
 
-                    {step === 7 && (
+                    {/* Paso 6: Resumen */}
+                    {step === 6 && (
                       <div className="mb-4 space-y-4">
                         <div className="space-y-2">
                           <label className="block text-sm font-medium text-gray-700">
@@ -438,27 +392,10 @@ const StudentGoalModal = ({ studentId, onGoalCreated }) => {
                           </div>
                         </div>
 
-                        <div className="space-y-2">
-                          <label className="block text-sm font-medium text-gray-700">
-                            Control antropométrico
-                          </label>
-                          <select
-                            value={controlAntropometrico}
-                            onChange={(e) =>
-                              setControlAntropometrico(e.target.value)
-                            }
-                            className="w-full border p-2 rounded"
-                          >
-                            <option value="">Seleccionar</option>
-                            <option value="SI">Sí</option>
-                            <option value="NO">No</option>
-                          </select>
-                        </div>
-
                         <div className="text-center mt-4">
                           <div className="text-lg font-medium">
                             Tu IMC es:{' '}
-                            <span className="font-bold text-blue-700">
+                            <span className="font-bold text-purple-700">
                               {imc}
                             </span>
                           </div>
@@ -472,7 +409,7 @@ const StudentGoalModal = ({ studentId, onGoalCreated }) => {
                       </div>
                     )}
 
-                    {/* Botones de navegación */}
+                    {/* Navegación */}
                     <div className="flex justify-between items-center gap-4 mt-6">
                       {step > 1 && (
                         <button
@@ -486,11 +423,11 @@ const StudentGoalModal = ({ studentId, onGoalCreated }) => {
                         </button>
                       )}
 
-                      {step < 7 && (
+                      {step < 6 && (
                         <button
                           type="button"
                           onClick={() =>
-                            setStep((prev) => Math.min(prev + 1, 7))
+                            setStep((prev) => Math.min(prev + 1, 6))
                           }
                           disabled={
                             (step === 1 && !goal.trim()) ||
@@ -504,21 +441,21 @@ const StudentGoalModal = ({ studentId, onGoalCreated }) => {
                             (step === 3 && pesoKg <= 0) ||
                             (step === 4 && edad <= 0)
                               ? 'bg-gray-400 cursor-not-allowed'
-                              : 'bg-blue-600 hover:bg-blue-700'
+                              : 'bg-purple-600 hover:bg-purple-700'
                           }`}
                         >
                           Siguiente
                         </button>
                       )}
 
-                      {step === 7 && (
+                      {step === 6 && (
                         <button
                           type="submit"
                           disabled={saving}
                           className={`w-full py-3 rounded-lg text-white font-semibold transition ${
                             saving
                               ? 'bg-gray-400 cursor-not-allowed'
-                              : 'bg-blue-600 hover:bg-blue-700'
+                              : 'bg-purple-600 hover:bg-purple-700'
                           }`}
                         >
                           {saving ? 'Guardando...' : 'Guardar Objetivo'}

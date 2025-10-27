@@ -17,14 +17,14 @@ const containerVariants = {
     y: 0,
     transition: {
       staggerChildren: 0.1,
-      when: "beforeChildren",
-    },
-  },
+      when: 'beforeChildren'
+    }
+  }
 };
 
 const itemVariants = {
   hidden: { opacity: 0, y: -10 },
-  visible: { opacity: 1, y: 0 },
+  visible: { opacity: 1, y: 0 }
 };
 
 const StudentMonthlyGoalDetail = ({ studentId, reloadTrigger }) => {
@@ -42,7 +42,6 @@ const StudentMonthlyGoalDetail = ({ studentId, reloadTrigger }) => {
     setFormData(goal);
   }, [goal]);
 
-  
   const fetchGoal = async () => {
     try {
       const fechaActual = new Date();
@@ -81,7 +80,7 @@ const StudentMonthlyGoalDetail = ({ studentId, reloadTrigger }) => {
 
   if (!goal)
     return (
-      <div className="text-center mt-10 text-blue-900">
+      <div className="text-center mt-10 text-purple-900">
         No cargo el objetivo aún.
       </div>
     );
@@ -162,8 +161,6 @@ const StudentMonthlyGoalDetail = ({ studentId, reloadTrigger }) => {
       console.error('Error al actualizar objetivo', err);
     }
   };
-  
-  
 
   const campos = [
     { label: 'Mes', key: 'mes' },
@@ -186,7 +183,7 @@ const StudentMonthlyGoalDetail = ({ studentId, reloadTrigger }) => {
         <div className="flex-1 bg-gray-50 rounded-xl shadow-md border border-gray-200 p-6 max-w-3xl mx-auto">
           {/* Header */}
           <div className="flex justify-between items-center mb-6">
-            <h3 className="text-lg font-semibold text-blue-700 tracking-wide">
+            <h3 className="text-lg font-semibold text-purple-700 tracking-wide">
               Objetivo:{' '}
               {!editMode ? (
                 <span className="font-normal">{goal.objetivo}</span>
@@ -196,7 +193,7 @@ const StudentMonthlyGoalDetail = ({ studentId, reloadTrigger }) => {
                   name="objetivo"
                   value={formData.objetivo ?? ''}
                   onChange={handleChange}
-                  className="border-b border-blue-600 focus:outline-none focus:border-blue-800 font-normal"
+                  className="border-b border-purple-600 focus:outline-none focus:border-purple-800 font-normal"
                   style={{ minWidth: '250px' }}
                 />
               )}
@@ -205,7 +202,7 @@ const StudentMonthlyGoalDetail = ({ studentId, reloadTrigger }) => {
             {!editMode ? (
               <button
                 onClick={() => setEditMode(true)}
-                className="text-blue-600 text-sm font-medium hover:text-blue-800 transition-colors"
+                className="text-purple-600 text-sm font-medium hover:text-purple-800 transition-colors"
                 aria-label="Editar objetivo"
               >
                 ✏️ Editar
@@ -241,21 +238,21 @@ const StudentMonthlyGoalDetail = ({ studentId, reloadTrigger }) => {
                   key={key}
                   className="flex justify-between items-center border-b border-gray-200 pb-1 last:border-b-0"
                 >
-                  <span className="font-semibold text-blue-600">{label}:</span>
+                  <span className="font-semibold text-purple-600">{label}:</span>
                   <span className="ml-4 font-normal text-gray-900">{`${
                     goal[key] ?? '—'
                   } ${unit ?? ''}`}</span>
                 </div>
               ))}
 
-              <div className="col-span-1 md:col-span-2 flex justify-between items-center border-b border-gray-200 pb-1 last:border-b-0">
-                <span className="font-semibold text-blue-600">
+              {/* <div className="col-span-1 md:col-span-2 flex justify-between items-center border-b border-gray-200 pb-1 last:border-b-0">
+                <span className="font-semibold text-purple-600">
                   Control Antropométrico:
                 </span>
                 <span className="ml-4 font-normal text-gray-900">
                   {goal.control_antropometrico ?? '—'}
                 </span>
-              </div>
+              </div> */}
             </div>
           ) : (
             <AnimatePresence>
@@ -274,7 +271,7 @@ const StudentMonthlyGoalDetail = ({ studentId, reloadTrigger }) => {
                   >
                     <label
                       htmlFor={key}
-                      className="font-semibold text-blue-600 mb-1"
+                      className="font-semibold text-purple-600 mb-1"
                     >
                       {label}:
                     </label>
@@ -289,19 +286,19 @@ const StudentMonthlyGoalDetail = ({ studentId, reloadTrigger }) => {
                         name={key}
                         value={formData[key] ?? ''}
                         onChange={handleChange}
-                        className="border border-gray-300 rounded px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                        className="border border-gray-300 rounded px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
                       />
                     )}
                   </motion.div>
                 ))}
 
-                <motion.div
+                {/* <motion.div
                   className="col-span-1 md:col-span-2 flex justify-between items-center"
                   variants={itemVariants}
                 >
                   <label
                     htmlFor="control_antropometrico"
-                    className="font-semibold text-blue-600 "
+                    className="font-semibold text-purple-600 "
                   >
                     Control Antropométrico:
                   </label>
@@ -311,9 +308,9 @@ const StudentMonthlyGoalDetail = ({ studentId, reloadTrigger }) => {
                     name="control_antropometrico"
                     value={formData.control_antropometrico ?? ''}
                     onChange={handleChange}
-                    className="ml-4 border border-gray-300 rounded px-3 py-1 w-full max-w-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-400 transition"
+                    className="ml-4 border border-gray-300 rounded px-3 py-1 w-full max-w-xs text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-400 transition"
                   />
-                </motion.div>
+                </motion.div> */}
               </motion.div>
             </AnimatePresence>
           )}
@@ -329,7 +326,7 @@ const StudentMonthlyGoalDetail = ({ studentId, reloadTrigger }) => {
                 <button
                   key={semana}
                   onClick={() => setMostrarFormSemana(semana)}
-                  className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full bg-purple-600 text-white py-2 rounded-md hover:bg-purple-700 transition focus:outline-none focus:ring-2 focus:ring-purple-500"
                   aria-label={`Registrar progreso semana ${semana}`}
                 >
                   Registrar progreso semana {semana}

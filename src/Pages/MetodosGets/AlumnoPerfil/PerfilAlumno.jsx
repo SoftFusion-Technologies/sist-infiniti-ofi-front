@@ -156,7 +156,7 @@ function PerfilAlumno() {
       <div className="min-h-screen pt-10 pb-10 bg-[radial-gradient(ellipse_at_top,rgba(2,6,23,1),rgba(2,6,23,1))]">
         <ParticlesBackground />
 
-        {userLevel === '' && (
+        {userLevel === 'alumno' && (
           <StudentGoalModal
             studentId={id}
             onGoalCreated={() => setReloadGoals((prev) => !prev)}
@@ -390,10 +390,10 @@ function PerfilAlumno() {
             reloadTrigger={reloadGoals}
           />
         </div>
-        <h2 className="text-center text-white titulo text-4xl mt-10 mb-10">
+        {/* <h2 className="text-center text-white titulo text-4xl mt-10 mb-10">
           ESTADÍSTICAS
         </h2>
-        <EstadisticasRutinas studentId={id} />
+        <EstadisticasRutinas studentId={id} /> */}
       </div>
 
       {/* Modal condicional */}

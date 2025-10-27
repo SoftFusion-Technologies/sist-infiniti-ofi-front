@@ -124,7 +124,7 @@ const RegistrarProgresoModal = ({ semana, studentId, onClose }) => {
               required
               value={formData.fecha}
               onChange={handleChange}
-              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-700"
+              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-purple-700"
             />
           </div>
 
@@ -134,7 +134,7 @@ const RegistrarProgresoModal = ({ semana, studentId, onClose }) => {
               Peso (kg)
             </label>
             {objetivoMensual?.peso_kg && (
-              <p className="text-xs text-blue-600 mb-1">
+              <p className="text-xs text-purple-600 mb-1">
                 Peso Registrado: <strong>{objetivoMensual.peso_kg} kg</strong>
               </p>
             )}
@@ -146,7 +146,7 @@ const RegistrarProgresoModal = ({ semana, studentId, onClose }) => {
               placeholder="Ej: 70.5"
               value={formData.peso_kg}
               onChange={handleChange}
-              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-700"
+              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-purple-700"
             />
           </div>
 
@@ -156,7 +156,7 @@ const RegistrarProgresoModal = ({ semana, studentId, onClose }) => {
               Altura (cm)
             </label>
             {objetivoMensual?.altura_cm && (
-              <p className="text-xs text-blue-600 mb-1">
+              <p className="text-xs text-purple-600 mb-1">
                 Altura Registrado:{' '}
                 <strong>{objetivoMensual.altura_cm} cm</strong>
               </p>
@@ -168,7 +168,7 @@ const RegistrarProgresoModal = ({ semana, studentId, onClose }) => {
               placeholder="Ej: 175.0"
               value={formData.altura_cm}
               onChange={handleChange}
-              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-700"
+              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-purple-700"
             />
           </div>
 
@@ -178,7 +178,7 @@ const RegistrarProgresoModal = ({ semana, studentId, onClose }) => {
               % Grasa corporal
             </label>
             {objetivoMensual?.grasa_corporal && (
-              <p className="text-xs text-blue-600 mb-1">
+              <p className="text-xs text-purple-600 mb-1">
                 Grasa Registrado:{' '}
                 <strong>{objetivoMensual.grasa_corporal} %</strong>
               </p>
@@ -190,7 +190,7 @@ const RegistrarProgresoModal = ({ semana, studentId, onClose }) => {
               placeholder="Ej: 22.5"
               value={formData.grasa_corporal}
               onChange={handleChange}
-              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-700"
+              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-purple-700"
             />
           </div>
 
@@ -200,7 +200,7 @@ const RegistrarProgresoModal = ({ semana, studentId, onClose }) => {
               Cintura (cm)
             </label>
             {objetivoMensual?.cintura_cm && (
-              <p className="text-xs text-blue-600 mb-1">
+              <p className="text-xs text-purple-600 mb-1">
                 Cintura Registrado:{' '}
                 <strong>{objetivoMensual.cintura_cm} cm</strong>
               </p>
@@ -212,7 +212,7 @@ const RegistrarProgresoModal = ({ semana, studentId, onClose }) => {
               placeholder="Ej: 85.0"
               value={formData.cintura_cm}
               onChange={handleChange}
-              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-700"
+              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-purple-700"
             />
           </div>
 
@@ -227,7 +227,7 @@ const RegistrarProgresoModal = ({ semana, studentId, onClose }) => {
               placeholder="Observaciones sobre el progreso del estudiante"
               value={formData.comentario}
               onChange={handleChange}
-              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-700"
+              className="w-full border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-purple-700"
             />
           </div>
 
@@ -242,7 +242,7 @@ const RegistrarProgresoModal = ({ semana, studentId, onClose }) => {
             </button>
             <button
               type="submit"
-              className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition"
+              className="bg-purple-700 text-white px-4 py-2 rounded hover:bg-purple-800 transition"
             >
               Guardar
             </button>

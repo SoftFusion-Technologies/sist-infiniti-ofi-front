@@ -24,6 +24,9 @@ import EjerciciosCatalogo from './Pages/Components/EjerciciosCatalogo';
 import AlumnosGet from './Pages/MetodosGets/AlumnosGet.jsx';
 import PerfilAlumno from './Pages/MetodosGets/AlumnoPerfil/PerfilAlumno.jsx';
 import ColoresRutinaCrud from './Pages/MetodosGets/ColoresRutinaCrud.jsx';
+import PSEDashboard from './Pages/MetodosGets/PSEDashboard.jsx';
+import RMListWrapper from './Pages/MetodosGets/RM/RMListWrapper.jsx';
+import LogsGlobalAlumno from './Pages/MetodosGets/AlumnoPerfil/LogsGlobalAlumno.jsx';
 
 const AdminPage = lazy(() => import('./Pages/staff/AdminPage'));
 
@@ -152,6 +155,31 @@ export default function App() {
             <ProtectedRoute>
               {' '}
               <ColoresRutinaCrud />{' '}
+            </ProtectedRoute>
+          }
+        />{' '}
+        <Route
+          path="/dashboard/pse"
+          element={
+            <ProtectedRoute>
+              <PSEDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/rm"
+          element={
+            <ProtectedRoute>
+              <RMListWrapper />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard/logs-global"
+          element={
+            <ProtectedRoute>
+              {' '}
+              <LogsGlobalAlumno />{' '}
             </ProtectedRoute>
           }
         />{' '}
